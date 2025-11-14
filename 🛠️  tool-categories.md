@@ -34,6 +34,7 @@
 - What constraints do they face (technical, institutional, temporal)?
 
 **Typical Duration**: 2-6 weeks
+**Source**: *MSFC Coordination on Solutions Co-Development Toolkit*
 
 </details>
 
@@ -175,6 +176,7 @@ Understanding institutional, technical, and cultural constraints that shape solu
 - Output validation and format specification
 
 **Typical Duration**: 3-8 weeks
+**Source**: *Solution Co-Development Toolkit Narrative; SERVIR Service Design Tool 2021*
 
 </details>
 
@@ -278,7 +280,7 @@ Systematic verification of key parameters (resolution, frequency, latency, forma
 <tr>
 <td>
 
-**🎯 [Service Concept Development Guide](https://github.com/your-repo/issues/10)**
+**🎯 [Service Concept Development Instructions](https://github.com/your-repo/issues/10)**
 
 </td>
 <td>
@@ -316,6 +318,7 @@ Creating shared service vision documents that articulate impact pathways and tec
 - Usability barrier identification and resolution
 
 **Typical Duration**: 8-20 weeks (iterative)
+**Source**: *Solution Co-Development Toolkit Narrative; NSITE Solution Project Requirements*
 
 </details>
 
@@ -346,14 +349,14 @@ Creating shared service vision documents that articulate impact pathways and tec
 </td>
 <td>
 
-Structured approach to testing prototypes with real users. Includes observation guides and analysis frameworks.
+Structured approach to testing prototypes with real users. Includes observation templates and analysis frameworks.
 
 </td>
 </tr>
 <tr>
 <td>
 
-**🎨 [Prototype Review Session Guide](https://github.com/your-repo/issues/12)**
+**🎨 [Prototype Review Session Instructions](https://github.com/your-repo/issues/12)**
 
 </td>
 <td>
@@ -457,6 +460,7 @@ Ensuring technical specifications match user requirements and real-world constra
 - Adoption monitoring and sustainability planning
 
 **Typical Duration**: 4-12 weeks (ongoing support)
+**Source**: *NSITE Solution Project Requirements; SERVIR Capacity Building and Training Definition*
 
 </details>
 
@@ -509,14 +513,14 @@ Limited release to co-design participants for final validation before broader de
 </td>
 <td>
 
-Creating user guides, quick-start materials, and training content that matches user skill levels.
+Creating user documentation, quick-start materials, and training content that matches user skill levels.
 
 </td>
 </tr>
 <tr>
 <td>
 
-**🔧 [Support System Setup Guide](https://github.com/your-repo/issues/18)**
+**🔧 [Support System Setup Instructions](https://github.com/your-repo/issues/18)**
 
 </td>
 <td>
@@ -673,7 +677,7 @@ Keeping stakeholders informed of progress and demonstrating how their feedback s
 - 📋 [Output Validation Checklist](https://github.com/your-repo/issues/9)
 - ✅ [Technical Validation Checklist](https://github.com/your-repo/issues/15)
 - 📝 [Decision Documentation Template](https://github.com/your-repo/issues/22)
-- 🎨 [Prototype Review Session Guide](https://github.com/your-repo/issues/12)
+- 🎨 [Prototype Review Session Instructions](https://github.com/your-repo/issues/12)
 
 </details>
 
@@ -692,7 +696,7 @@ Keeping stakeholders informed of progress and demonstrating how their feedback s
 
 - 📋 [Needs Assessment Survey Design](https://github.com/your-repo/issues/3)
 - 🔄 [Information Flow Analysis](https://github.com/your-repo/issues/4)
-- 🎯 [Service Concept Development Guide](https://github.com/your-repo/issues/10)
+- 🎯 [Service Concept Development Instructions](https://github.com/your-repo/issues/10)
 - 📚 [Training Material Development Kit](https://github.com/your-repo/issues/17)
 
 </details>
@@ -702,4 +706,83 @@ Keeping stakeholders informed of progress and demonstrating how their feedback s
 <details>
 <summary><strong>👤 Solo/Small Team (1-3 people)</strong></summary>
 
-- 💬
+- 📋 [Needs Assessment Survey Design](https://github.com/your-repo/issues/3)
+- 💬 [Discovery Interview Blueprint](https://github.com/your-repo/issues/2)
+- 📝 [Decision Documentation Template](https://github.com/your-repo/issues/22)
+- ✅ [Technical Validation Checklist](https://github.com/your-repo/issues/15)
+
+</details>
+
+<details>
+<summary><strong>👥 Medium Team (4-8 people)</strong></summary>
+
+- 🗺️ [Stakeholder Mapping Workshop](https://github.com/your-repo/issues/1)
+- 🏗️ [Co-Design Workshop Facilitator Manual](https://github.com/your-repo/issues/6)
+- 🗺️ [User Journey Mapping Kit](https://github.com/your-repo/issues/8)
+- 🧪 [User Testing Protocol](https://github.com/your-repo/issues/11)
+
+</details>
+
+<details>
+<summary><strong>👫 Large Group (9+ people)</strong></summary>
+
+- 🎯 [Context Analysis Framework](https://github.com/your-repo/issues/5)
+- 🎯 [Service Concept Development Instructions](https://github.com/your-repo/issues/10)
+- 🌱 [Sustainability Planning Workshop](https://github.com/your-repo/issues/20)
+
+</details>
+
+### By Experience Level
+
+<details>
+<summary><strong>🌱 New to Co-Design</strong></summary>
+
+**Start with these beginner-friendly tools:**
+- 🗺️ [Stakeholder Mapping Workshop](https://github.com/your-repo/issues/1) - Learn who's involved
+- 📋 [Requirements Definition Canvas](https://github.com/your-repo/issues/7) - Capture what users need
+- ✅ [Output Validation Checklist](https://github.com/your-repo/issues/9) - Verify you're on track
+- 📝 [Decision Documentation Template](https://github.com/your-repo/issues/22) - Keep records
+
+</details>
+
+<details>
+<summary><strong>📈 Some Experience</strong></summary>
+
+**Ready for intermediate challenges:**
+- 💬 [Discovery Interview Blueprint](https://github.com/your-repo/issues/2)
+- 🏗️ [Co-Design Workshop Facilitator Manual](https://github.com/your-repo/issues/6)
+- 🧪 [User Testing Protocol](https://github.com/your-repo/issues/11)
+- 📚 [Training Material Development Kit](https://github.com/your-repo/issues/17)
+
+</details>
+
+<details>
+<summary><strong>🎯 Advanced Practitioner</strong></summary>
+
+**Complex tools for experienced teams:**
+- 🔄 [Information Flow Analysis](https://github.com/your-repo/issues/4)
+- 🎯 [Service Concept Development Instructions](https://github.com/your-repo/issues/10)
+- 📊 [Usability Metrics Dashboard](https://github.com/your-repo/issues/13)
+- 📊 [Adoption Monitoring Framework](https://github.com/your-repo/issues/19)
+
+</details>
+
+---
+
+## 📄 Sources and Attribution
+
+Tool categories and descriptions synthesized from:
+- **MSFC Coordination on Solutions Co-Development Toolkit** - Phase definitions and workflows
+- **NSITE Solution Project Requirements and Expectations** - Tool applications and timing
+- **SERVIR Service Planning Toolkit 2021** - Service design methodology
+- **Solution Co-Development Toolkit Narrative** - Iterative development approaches
+
+---
+
+<div align="center">
+
+**🎯 Can't find what you need? [Suggest a new tool!](https://github.com/your-repo/issues/new?template=new-tool.md)**
+
+[← Framework Overview](framework-overview.md) | [Next: Implementation Manual →](implementation-manual.md)
+
+</div>
