@@ -78,14 +78,27 @@ graph LR
 
 <div align="center">
 
-| 🔍 **Discovery** | 🎨 **Co-Creation** | ⚙️ **Development** | 🚀 **Deployment** |
-|:---:|:---:|:---:|:---:|
-| Stakeholder Mapping | Workshop Facilitation | User Testing | Training Design |
-| Needs Assessment | Requirements Definition | Prototype Iteration | Adoption Planning |
-| Context Analysis | Journey Mapping | Usability Validation | Sustainability Strategy |
-| [*View All →*](tool-categories.md#discovery) | [*View All →*](tool-categories.md#co-creation) | [*View All →*](tool-categories.md#development) | [*View All →*](tool-categories.md#deployment) |
+| 👥 **[Users & Stakeholders](../../issues/1)** | ⚙️ **[Technical Co-Development](../../issues/2)** | 🏛️ **[Organizational & Process](../../issues/3)** |
+|:---:|:---:|:---:|
+| *Understanding and engaging with people* | *Building and testing with users* | *Managing co-design at scale* |
+| Stakeholder Mapping | User Testing | Project Planning |
+| Discovery Interviews | Prototype Reviews | Training Development |
+| Collaboration Workshops | Technical Validation | Adoption Monitoring |
+| [*Explore Category →*](../../issues/1) | [*Explore Category →*](../../issues/2) | [*Explore Category →*](../../issues/3) |
 
 </div>
+
+### 🎯 Quick Tool Finder
+
+**By Experience Level:**
+- 🌱 **New to Co-Design?** Start with [Users & Stakeholders tools](../../issues/2)
+- 📈 **Building Solutions?** Focus on [Technical Co-Development tools](../../issues/3)  
+- 🎯 **Scaling Practices?** Use [Organizational & Process tools](../../issues/4)
+
+**By Current Need:**
+- 🤔 *"I don't know my users"* → [Users & Stakeholders Category](../../issues/2)
+- 🛠️ *"I'm building but need feedback"* → [Technical Co-Development Category](../../issues/3)
+- 📋 *"I need systematic processes"* → [Organizational & Process Category](../../issues/4)
 
 ---
 
@@ -118,16 +131,21 @@ graph LR
 
 ## 🚀 Getting Started Today
 
-### Option 1: Browse Tools by Issue Labels
-- [`🔍 discovery-tools`](https://github.com/your-repo/issues?q=is%3Aissue+label%3Adiscovery-tools) - Understanding user needs
-- [`🎨 co-creation-tools`](https://github.com/your-repo/issues?q=is%3Aissue+label%3Aco-creation-tools) - Building together
-- [`⚙️ development-tools`](https://github.com/your-repo/issues?q=is%3Aissue+label%3Adevelopment-tools) - Iterative improvement
-- [`🚀 deployment-tools`](https://github.com/your-repo/issues?q=is%3Aissue+label%3Adeployment-tools) - Sustainable adoption
+### Option 1: Browse by Tool Category
+- [`👥 Users & Stakeholders`](../../issues/1) - Understanding and engaging with people
+- [`⚙️ Technical Co-Development`](../../issues/2) - Building and testing with users
+- [`🏛️ Organizational & Process`](../../issues/3) - Managing co-design at scale
 
-### Option 2: Use Our Tool Finder
+### Option 2: Browse All Tools by Labels  
+- [`🔍 discovery-tools`](../../labels/phase-discovery) - Understanding user needs
+- [`🎨 co-creation-tools`](../../labels/phase-co-creation) - Building together
+- [`⚙️ development-tools`](../../labels/phase-development) - Iterative improvement
+- [`🚀 deployment-tools`](../../labels/phase-deployment) - Sustainable adoption
+
+### Option 3: Use Our Tool Finder
 [**🎯 Interactive Tool Finder →**](https://your-github-pages-url.github.io)
 
-### Option 3: Start with Fundamentals
+### Option 4: Start with Fundamentals
 [**📖 Framework Overview →**](framework-overview.md)
 
 ---
