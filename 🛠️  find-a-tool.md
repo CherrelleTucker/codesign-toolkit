@@ -1,4 +1,4 @@
-# 🛠️ Tool Categories
+# 🛠️ Find a Tool
 ## *Organized by Phase, Purpose, and Complexity*
 
 ---
@@ -50,7 +50,7 @@
 <tr>
 <td>
 
-**🗺️ [Stakeholder Mapping Workshop](https://github.com/your-repo/issues/1)**
+**🗺️ [Stakeholder Mapping Workshop](https://github.com/CherrelleTucker/codesign-toolkit/issues/5)**
 
 </td>
 <td>
@@ -72,7 +72,7 @@ Understanding who's involved, their relationships, and influence levels. Great s
 <tr>
 <td>
 
-**💬 [Discovery Interview Blueprint](https://github.com/your-repo/issues/2)**
+**💬 [Discovery Interview Blueprint](https://github.com/CherrelleTucker/codesign-toolkit/issues/12)**
 
 </td>
 <td>
@@ -94,12 +94,12 @@ Deep-dive conversations when surveys won't capture the full picture. Excellent f
 <tr>
 <td>
 
-**📋 [Needs Assessment Survey Design](https://github.com/your-repo/issues/3)**
+**🔍 [Needs Assessment Tool](https://github.com/CherrelleTucker/codesign-toolkit/issues/29)**
 
 </td>
 <td>
 
-🌱 Beginner
+📈 Intermediate
 
 </td>
 <td>
@@ -109,24 +109,24 @@ Deep-dive conversations when surveys won't capture the full picture. Excellent f
 </td>
 <td>
 
-Gathering structured data from larger user groups. Perfect for validating assumptions at scale.
+Systematic approach to understanding user problems and requirements. Perfect for validating assumptions at scale.
 
 </td>
 </tr>
 <tr>
 <td>
 
-**🔄 [Information Flow Analysis](https://github.com/your-repo/issues/4)**
+**📊 [Information Flow Analysis Tool](https://github.com/CherrelleTucker/codesign-toolkit/issues/30)**
 
 </td>
 <td>
 
-🎯 Advanced
+📈 Intermediate
 
 </td>
 <td>
 
-3-5 days
+3-4 hours
 
 </td>
 <td>
@@ -138,7 +138,7 @@ Tracing how data moves from source to action. Critical for identifying bottlenec
 <tr>
 <td>
 
-**🎯 [Context Analysis Framework](https://github.com/your-repo/issues/5)**
+**🎯 [Context Analysis Framework](https://github.com/CherrelleTucker/codesign-toolkit/issues/13)**
 
 </td>
 <td>
@@ -192,7 +192,7 @@ Understanding institutional, technical, and cultural constraints that shape solu
 <tr>
 <td>
 
-**🏗️ [Co-Design Workshop Facilitator Manual](https://github.com/your-repo/issues/6)**
+**🔨 [Co-Design Workshop Facilitator Manual](https://github.com/CherrelleTucker/codesign-toolkit/issues/14)**
 
 </td>
 <td>
@@ -214,7 +214,7 @@ Structured sessions to align scientists and users around solution goals. Include
 <tr>
 <td>
 
-**📋 [Requirements Definition Canvas](https://github.com/your-repo/issues/7)**
+**📋 [Requirements Definition Canvas](https://github.com/CherrelleTucker/codesign-toolkit/issues/6)**
 
 </td>
 <td>
@@ -236,7 +236,7 @@ Visual template for capturing functional requirements, interface logic, and outp
 <tr>
 <td>
 
-**🗺️ [User Journey Mapping Kit](https://github.com/your-repo/issues/8)**
+**🛤️ [User Journey Mapping Kit](https://github.com/CherrelleTucker/codesign-toolkit/issues/15)**
 
 </td>
 <td>
@@ -258,7 +258,7 @@ Mapping how users will interact with solutions from start to finish. Identifies 
 <tr>
 <td>
 
-**✅ [Output Validation Checklist](https://github.com/your-repo/issues/9)**
+**✅ [Output Validation Checklist](https://github.com/CherrelleTucker/codesign-toolkit/issues/18)**
 
 </td>
 <td>
@@ -280,7 +280,8 @@ Systematic verification of key parameters (resolution, frequency, latency, forma
 <tr>
 <td>
 
-**🎯 [Service Concept Development Instructions](https://github.com/your-repo/issues/10)**
+**🎯 Service Concept Development Instructions** 
+*🚧 To be developed*
 
 </td>
 <td>
@@ -334,7 +335,7 @@ Creating shared service vision documents that articulate impact pathways and tec
 <tr>
 <td>
 
-**🧪 [User Testing Protocol](https://github.com/your-repo/issues/11)**
+**🧪 [User Testing Protocol](https://github.com/CherrelleTucker/codesign-toolkit/issues/11)**
 
 </td>
 <td>
@@ -356,7 +357,7 @@ Structured approach to testing prototypes with real users. Includes observation 
 <tr>
 <td>
 
-**🎨 [Prototype Review Session Instructions](https://github.com/your-repo/issues/12)**
+**🎭 [Prototype Review Session Instructions](https://github.com/CherrelleTucker/codesign-toolkit/issues/19)**
 
 </td>
 <td>
@@ -378,7 +379,7 @@ Collaborative feedback sessions at key development decision points. Great for ma
 <tr>
 <td>
 
-**📊 [Usability Metrics Dashboard](https://github.com/your-repo/issues/13)**
+**📊 [Usability Metrics Dashboard](https://github.com/CherrelleTucker/codesign-toolkit/issues/21)**
 
 </td>
 <td>
@@ -400,7 +401,7 @@ Tracking task completion rates, error rates, time-to-competency, and satisfactio
 <tr>
 <td>
 
-**🔄 [Design Iteration Framework](https://github.com/your-repo/issues/14)**
+**🔄 [Design Iteration Framework](https://github.com/CherrelleTucker/codesign-toolkit/issues/22)**
 
 </td>
 <td>
@@ -422,7 +423,7 @@ Systematic approach to incorporating user feedback into design improvements. Inc
 <tr>
 <td>
 
-**✅ [Technical Validation Checklist](https://github.com/your-repo/issues/15)**
+**✅ [Technical Validation Checklist](https://github.com/CherrelleTucker/codesign-toolkit/issues/20)**
 
 </td>
 <td>
@@ -438,6 +439,74 @@ Systematic approach to incorporating user feedback into design improvements. Inc
 <td>
 
 Ensuring technical specifications match user requirements and real-world constraints.
+
+</td>
+</tr>
+<tr>
+<td>
+
+**🔧 [User-Centered Design Guidance](https://github.com/CherrelleTucker/codesign-toolkit/issues/1)**
+
+</td>
+<td>
+
+📈 Intermediate
+
+</td>
+<td>
+
+Cross-cutting
+
+</td>
+<td>
+
+Comprehensive framework for integrating user-centered design principles throughout development.
+
+</td>
+</tr>
+<tr>
+<td>
+
+**📋 Solution Implementation Plan Template**
+*🚧 To be developed*
+
+</td>
+<td>
+
+📈 Intermediate
+
+</td>
+<td>
+
+4-6 hours
+
+</td>
+<td>
+
+Systematic planning for Earth observation solution deployment with clear phases and responsibilities.
+
+</td>
+</tr>
+<tr>
+<td>
+
+**💾 Data Management Plan Template**
+*🚧 To be developed*
+
+</td>
+<td>
+
+📈 Intermediate
+
+</td>
+<td>
+
+3-4 hours
+
+</td>
+<td>
+
+Structured approach to managing Earth observation data throughout solution lifecycle.
 
 </td>
 </tr>
@@ -476,7 +545,8 @@ Ensuring technical specifications match user requirements and real-world constra
 <tr>
 <td>
 
-**🎯 [Soft Launch Strategy Template](https://github.com/your-repo/issues/16)**
+**🌱 Soft Launch Strategy Template**
+*🚧 To be developed*
 
 </td>
 <td>
@@ -498,7 +568,7 @@ Limited release to co-design participants for final validation before broader de
 <tr>
 <td>
 
-**📚 [Training Material Development Kit](https://github.com/your-repo/issues/17)**
+**📚 [Training Material Development Kit](https://github.com/CherrelleTucker/codesign-toolkit/issues/23)**
 
 </td>
 <td>
@@ -520,7 +590,7 @@ Creating user documentation, quick-start materials, and training content that ma
 <tr>
 <td>
 
-**🔧 [Support System Setup Instructions](https://github.com/your-repo/issues/18)**
+**🛠️ [Support System Setup Instructions](https://github.com/CherrelleTucker/codesign-toolkit/issues/24)**
 
 </td>
 <td>
@@ -542,12 +612,12 @@ Establishing channels for user questions, issue reporting, and ongoing communica
 <tr>
 <td>
 
-**📊 [Adoption Monitoring Framework](https://github.com/your-repo/issues/19)**
+**📊 [Adoption Monitoring Dashboard](https://github.com/CherrelleTucker/codesign-toolkit/issues/25)**
 
 </td>
 <td>
 
-🎯 Advanced
+📈 Intermediate
 
 </td>
 <td>
@@ -557,14 +627,15 @@ Ongoing
 </td>
 <td>
 
-Tracking actual usage patterns, gathering impact stories, and measuring solution effectiveness.
+Tracking user engagement and solution success to guide improvements and ensure sustained value delivery.
 
 </td>
 </tr>
 <tr>
 <td>
 
-**🌱 [Sustainability Planning Workshop](https://github.com/your-repo/issues/20)**
+**🌱 Sustainability Planning Workshop**
+*🚧 To be developed*
 
 </td>
 <td>
@@ -584,6 +655,7 @@ Working with users to identify long-term ownership models and maintenance approa
 </td>
 </tr>
 </table>
+
 ---
 
 ## 📈 Impact & Monitoring Phase
@@ -618,7 +690,8 @@ Working with users to identify long-term ownership models and maintenance approa
 <tr>
 <td>
 
-**🎓 [Designing for Impact 101 Guide](https://github.com/your-repo/issues/24)**
+**🎓 Designing for Impact 101 Guide**
+*🚧 To be developed*
 
 </td>
 <td>
@@ -640,7 +713,8 @@ Learning fundamental principles for creating solutions that drive measurable cha
 <tr>
 <td>
 
-**📊 [Monitoring, Impact and Learning Plan Template](https://github.com/your-repo/issues/25)**
+**📊 Monitoring, Impact and Learning Plan Template**
+*🚧 To be developed*
 
 </td>
 <td>
@@ -662,7 +736,7 @@ Comprehensive framework for tracking performance, measuring outcomes, and captur
 <tr>
 <td>
 
-**🎯 [Indicator Development Guidance](https://github.com/your-repo/issues/26)**
+**🎯 [Indicator Development Guidance](https://github.com/CherrelleTucker/codesign-toolkit/issues/32)**
 
 </td>
 <td>
@@ -684,7 +758,7 @@ Creating specific, measurable indicators that capture real value and impact acro
 <tr>
 <td>
 
-**💰 [Economic Impact Assessment for EO Guidance](https://github.com/your-repo/issues/27)**
+**💰 [Economic Impact Assessment for EO Guidance](https://github.com/CherrelleTucker/codesign-toolkit/issues/33)**
 
 </td>
 <td>
@@ -706,7 +780,7 @@ Calculating ROI, cost-benefit analysis, and financial value to demonstrate econo
 <tr>
 <td>
 
-**📖 [Impact Story Collection Templates](https://github.com/your-repo/issues/28)**
+**📖 [Impact Story Collection Templates](https://github.com/CherrelleTucker/codesign-toolkit/issues/34)**
 
 </td>
 <td>
@@ -722,6 +796,50 @@ Calculating ROI, cost-benefit analysis, and financial value to demonstrate econo
 <td>
 
 Ready-to-use formats for documenting and sharing success stories across different audiences and channels.
+
+</td>
+</tr>
+<tr>
+<td>
+
+**🎓 [Designing for Impact 101 Guide](https://github.com/CherrelleTucker/codesign-toolkit/issues/35)**
+
+</td>
+<td>
+
+🌱 Beginner
+
+</td>
+<td>
+
+2-3 hours
+
+</td>
+<td>
+
+Fundamental principles for creating Earth observation solutions that drive real change.
+
+</td>
+</tr>
+<tr>
+<td>
+
+**📖 [Capturing Impact Sample Formats](https://github.com/CherrelleTucker/codesign-toolkit/issues/36)**
+
+</td>
+<td>
+
+📈 Intermediate
+
+</td>
+<td>
+
+30-90 min per format
+
+</td>
+<td>
+
+Templates and examples for documenting Earth observation solution impact across different audiences.
 
 </td>
 </tr>
@@ -742,7 +860,7 @@ Ready-to-use formats for documenting and sharing success stories across differen
 <tr>
 <td>
 
-**🤝 [Stakeholder Engagement Planner](https://github.com/your-repo/issues/21)**
+**🤝 [Stakeholder Engagement Planner](https://github.com/CherrelleTucker/codesign-toolkit/issues/16)**
 
 </td>
 <td>
@@ -764,7 +882,7 @@ Scheduling touchpoints, managing communication, and maintaining relationships th
 <tr>
 <td>
 
-**📝 [Decision Documentation Template](https://github.com/your-repo/issues/22)**
+**📝 [Decision Documentation Template](https://github.com/CherrelleTucker/codesign-toolkit/issues/7)**
 
 </td>
 <td>
@@ -786,7 +904,7 @@ Recording design decisions, user input, alternatives considered, and rationale f
 <tr>
 <td>
 
-**📊 [Progress Communication Dashboard](https://github.com/your-repo/issues/23)**
+**📊 [Progress Communication Dashboard](https://github.com/CherrelleTucker/codesign-toolkit/issues/9)**
 
 </td>
 <td>
@@ -805,6 +923,50 @@ Keeping stakeholders informed of progress and demonstrating how their feedback s
 
 </td>
 </tr>
+<tr>
+<td>
+
+**📅 [Touchpoint Scheduling Framework](https://github.com/CherrelleTucker/codesign-toolkit/issues/10)**
+
+</td>
+<td>
+
+All phases
+
+</td>
+<td>
+
+🌱 Beginner
+
+</td>
+<td>
+
+Structured approach to planning and managing regular user engagement throughout project lifecycle.
+
+</td>
+</tr>
+<tr>
+<td>
+
+**📋 [Co-Design Project Planning Template](https://github.com/CherrelleTucker/codesign-toolkit/issues/8)**
+
+</td>
+<td>
+
+Discovery + Co-Creation
+
+</td>
+<td>
+
+📈 Intermediate
+
+</td>
+<td>
+
+Comprehensive template for planning Earth observation solution co-design projects.
+
+</td>
+</tr>
 </table>
 
 ---
@@ -816,30 +978,32 @@ Keeping stakeholders informed of progress and demonstrating how their feedback s
 <details>
 <summary><strong>⚡ Quick Wins (< 2 hours)</strong></summary>
 
-- 📋 [Output Validation Checklist](https://github.com/your-repo/issues/9)
-- ✅ [Technical Validation Checklist](https://github.com/your-repo/issues/15)
-- 📝 [Decision Documentation Template](https://github.com/your-repo/issues/22)
-- 🎨 [Prototype Review Session Instructions](https://github.com/your-repo/issues/12)
+- ✅ [Output Validation Checklist](https://github.com/CherrelleTucker/codesign-toolkit/issues/18)
+- ✅ [Technical Validation Checklist](https://github.com/CherrelleTucker/codesign-toolkit/issues/20)
+- 📝 [Decision Documentation Template](https://github.com/CherrelleTucker/codesign-toolkit/issues/7)
+- 🎭 [Prototype Review Session Instructions](https://github.com/CherrelleTucker/codesign-toolkit/issues/19)
+- 📖 [Impact Story Collection Templates](https://github.com/CherrelleTucker/codesign-toolkit/issues/34)
 
 </details>
 
 <details>
 <summary><strong>⏰ Half-Day Commitment (2-4 hours)</strong></summary>
 
-- 🗺️ [Stakeholder Mapping Workshop](https://github.com/your-repo/issues/1)
-- 📋 [Requirements Definition Canvas](https://github.com/your-repo/issues/7)
-- 🧪 [User Testing Protocol](https://github.com/your-repo/issues/11)
-- 🌱 [Sustainability Planning Workshop](https://github.com/your-repo/issues/20)
+- 🗺️ [Stakeholder Mapping Workshop](https://github.com/CherrelleTucker/codesign-toolkit/issues/5)
+- 📋 [Requirements Definition Canvas](https://github.com/CherrelleTucker/codesign-toolkit/issues/6)
+- 🧪 [User Testing Protocol](https://github.com/CherrelleTucker/codesign-toolkit/issues/11)
+- 📊 [Information Flow Analysis Tool](https://github.com/CherrelleTucker/codesign-toolkit/issues/30)
+- 🎯 [Indicator Development Guidance](https://github.com/CherrelleTucker/codesign-toolkit/issues/32)
 
 </details>
 
 <details>
 <summary><strong>📅 Multi-Day Projects (1+ weeks)</strong></summary>
 
-- 📋 [Needs Assessment Survey Design](https://github.com/your-repo/issues/3)
-- 🔄 [Information Flow Analysis](https://github.com/your-repo/issues/4)
-- 🎯 [Service Concept Development Instructions](https://github.com/your-repo/issues/10)
-- 📚 [Training Material Development Kit](https://github.com/your-repo/issues/17)
+- 🔍 [Needs Assessment Tool](https://github.com/CherrelleTucker/codesign-toolkit/issues/29)
+- 🎯 [Context Analysis Framework](https://github.com/CherrelleTucker/codesign-toolkit/issues/13)
+- 📚 [Training Material Development Kit](https://github.com/CherrelleTucker/codesign-toolkit/issues/23)
+- 💰 [Economic Impact Assessment for EO Guidance](https://github.com/CherrelleTucker/codesign-toolkit/issues/33)
 
 </details>
 
@@ -848,29 +1012,31 @@ Keeping stakeholders informed of progress and demonstrating how their feedback s
 <details>
 <summary><strong>👤 Solo/Small Team (1-3 people)</strong></summary>
 
-- 📋 [Needs Assessment Survey Design](https://github.com/your-repo/issues/3)
-- 💬 [Discovery Interview Blueprint](https://github.com/your-repo/issues/2)
-- 📝 [Decision Documentation Template](https://github.com/your-repo/issues/22)
-- ✅ [Technical Validation Checklist](https://github.com/your-repo/issues/15)
+- 🔍 [Needs Assessment Tool](https://github.com/CherrelleTucker/codesign-toolkit/issues/29)
+- 💬 [Discovery Interview Blueprint](https://github.com/CherrelleTucker/codesign-toolkit/issues/12)
+- 📝 [Decision Documentation Template](https://github.com/CherrelleTucker/codesign-toolkit/issues/7)
+- ✅ [Technical Validation Checklist](https://github.com/CherrelleTucker/codesign-toolkit/issues/20)
+- 📖 [Impact Story Collection Templates](https://github.com/CherrelleTucker/codesign-toolkit/issues/34)
 
 </details>
 
 <details>
 <summary><strong>👥 Medium Team (4-8 people)</strong></summary>
 
-- 🗺️ [Stakeholder Mapping Workshop](https://github.com/your-repo/issues/1)
-- 🏗️ [Co-Design Workshop Facilitator Manual](https://github.com/your-repo/issues/6)
-- 🗺️ [User Journey Mapping Kit](https://github.com/your-repo/issues/8)
-- 🧪 [User Testing Protocol](https://github.com/your-repo/issues/11)
+- 🗺️ [Stakeholder Mapping Workshop](https://github.com/CherrelleTucker/codesign-toolkit/issues/5)
+- 🔨 [Co-Design Workshop Facilitator Manual](https://github.com/CherrelleTucker/codesign-toolkit/issues/14)
+- 🛤️ [User Journey Mapping Kit](https://github.com/CherrelleTucker/codesign-toolkit/issues/15)
+- 🧪 [User Testing Protocol](https://github.com/CherrelleTucker/codesign-toolkit/issues/11)
+- 📊 [Information Flow Analysis Tool](https://github.com/CherrelleTucker/codesign-toolkit/issues/30)
 
 </details>
 
 <details>
 <summary><strong>👫 Large Group (9+ people)</strong></summary>
 
-- 🎯 [Context Analysis Framework](https://github.com/your-repo/issues/5)
-- 🎯 [Service Concept Development Instructions](https://github.com/your-repo/issues/10)
-- 🌱 [Sustainability Planning Workshop](https://github.com/your-repo/issues/20)
+- 🎯 [Context Analysis Framework](https://github.com/CherrelleTucker/codesign-toolkit/issues/13)
+- 📋 [Co-Design Project Planning Template](https://github.com/CherrelleTucker/codesign-toolkit/issues/8)
+- 📚 [Training Material Development Kit](https://github.com/CherrelleTucker/codesign-toolkit/issues/23)
 
 </details>
 
@@ -880,12 +1046,13 @@ Keeping stakeholders informed of progress and demonstrating how their feedback s
 <summary><strong>🌱 New to Co-Design</strong></summary>
 
 **Start with these beginner-friendly tools:**
-- 🗺️ [Stakeholder Mapping Workshop](https://github.com/your-repo/issues/1) - Learn who's involved
-- 📋 [Requirements Definition Canvas](https://github.com/your-repo/issues/7) - Capture what users need
-- ✅ [Output Validation Checklist](https://github.com/your-repo/issues/9) - Verify you're on track
-- 📝 [Decision Documentation Template](https://github.com/your-repo/issues/22) - Keep records
-- 🎓 [Designing for Impact 101 Guide](https://github.com/your-repo/issues/24) - Learn impact fundamentals
-- 📖 [Impact Story Collection Templates](https://github.com/your-repo/issues/28) - Document success
+- 🗺️ [Stakeholder Mapping Workshop](https://github.com/CherrelleTucker/codesign-toolkit/issues/5) - Learn who's involved
+- 📋 [Requirements Definition Canvas](https://github.com/CherrelleTucker/codesign-toolkit/issues/6) - Capture what users need
+- ✅ [Output Validation Checklist](https://github.com/CherrelleTucker/codesign-toolkit/issues/18) - Verify you're on track
+- 📝 [Decision Documentation Template](https://github.com/CherrelleTucker/codesign-toolkit/issues/7) - Keep records
+- 🎓 [Designing for Impact 101 Guide](https://github.com/CherrelleTucker/codesign-toolkit/issues/35) - Learn impact fundamentals
+- 📖 [Impact Story Collection Templates](https://github.com/CherrelleTucker/codesign-toolkit/issues/34) - Document success
+- 🛠️ [Support System Setup Instructions](https://github.com/CherrelleTucker/codesign-toolkit/issues/24) - Establish user support
 
 </details>
 
@@ -893,12 +1060,14 @@ Keeping stakeholders informed of progress and demonstrating how their feedback s
 <summary><strong>📈 Some Experience</strong></summary>
 
 **Ready for intermediate challenges:**
-- 💬 [Discovery Interview Blueprint](https://github.com/your-repo/issues/2)
-- 🏗️ [Co-Design Workshop Facilitator Manual](https://github.com/your-repo/issues/6)
-- 🧪 [User Testing Protocol](https://github.com/your-repo/issues/11)
-- 📚 [Training Material Development Kit](https://github.com/your-repo/issues/17)
-- 📊 [Monitoring, Impact and Learning Plan Template](https://github.com/your-repo/issues/25)
-- 🎯 [Indicator Development Guidance](https://github.com/your-repo/issues/26)
+- 💬 [Discovery Interview Blueprint](https://github.com/CherrelleTucker/codesign-toolkit/issues/12)
+- 🔨 [Co-Design Workshop Facilitator Manual](https://github.com/CherrelleTucker/codesign-toolkit/issues/14)
+- 🧪 [User Testing Protocol](https://github.com/CherrelleTucker/codesign-toolkit/issues/11)
+- 📚 [Training Material Development Kit](https://github.com/CherrelleTucker/codesign-toolkit/issues/23)
+- 🔍 [Needs Assessment Tool](https://github.com/CherrelleTucker/codesign-toolkit/issues/29)
+- 📊 [Information Flow Analysis Tool](https://github.com/CherrelleTucker/codesign-toolkit/issues/30)
+- 🎯 [Indicator Development Guidance](https://github.com/CherrelleTucker/codesign-toolkit/issues/32)
+- 📊 [Adoption Monitoring Dashboard](https://github.com/CherrelleTucker/codesign-toolkit/issues/25)
 
 </details>
 
@@ -906,11 +1075,9 @@ Keeping stakeholders informed of progress and demonstrating how their feedback s
 <summary><strong>🎯 Advanced Practitioner</strong></summary>
 
 **Complex tools for experienced teams:**
-- 🔄 [Information Flow Analysis](https://github.com/your-repo/issues/4)
-- 🎯 [Service Concept Development Instructions](https://github.com/your-repo/issues/10)
-- 📊 [Usability Metrics Dashboard](https://github.com/your-repo/issues/13)
-- 📊 [Adoption Monitoring Framework](https://github.com/your-repo/issues/19)
-- 💰 [Economic Impact Assessment for EO Guidance](https://github.com/your-repo/issues/27)
+- 🎯 [Context Analysis Framework](https://github.com/CherrelleTucker/codesign-toolkit/issues/13)
+- 📊 [Usability Metrics Dashboard](https://github.com/CherrelleTucker/codesign-toolkit/issues/21)
+- 💰 [Economic Impact Assessment for EO Guidance](https://github.com/CherrelleTucker/codesign-toolkit/issues/33)
 
 </details>
 
@@ -928,7 +1095,7 @@ Tool categories and descriptions synthesized from:
 
 <div align="center">
 
-**🎯 Can't find what you need? [Suggest a new tool!](https://github.com/your-repo/issues/new?template=new-tool.md)**
+**🎯 Can't find what you need? [Suggest a new tool!](https://github.com/CherrelleTucker/codesign-toolkit/issues/new?template=new-tool.md)**
 
 [← Framework Overview](framework-overview.md) | [Next: Implementation Manual →](implementation-manual.md)
 
