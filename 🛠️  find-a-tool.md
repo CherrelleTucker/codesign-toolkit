@@ -11,9 +11,9 @@
 
 <div align="center">
 
-| 🔍 [**Discovery**](#discovery-phase) | 🎨 [**Co-Creation**](#co-creation-phase) | ⚙️ [**Development**](#development-phase) | 🚀 [**Deployment**](#deployment-phase) |
-|:---:|:---:|:---:|:---:|
-| *Understand users & context* | *Design solutions together* | *Build & test iteratively* | *Launch & sustain adoption* |
+| 🔍 [**Discovery**](#discovery-phase) | 🎨 [**Co-Creation**](#co-creation-phase) | ⚙️ [**Development**](#development-phase) | 🚀 [**Deployment**](#deployment-phase) | 📈 [**Impact & Monitoring**](#impact--monitoring-phase) |
+|:---:|:---:|:---:|:---:|:---:|
+| *Understand users & context* | *Design solutions together* | *Build & test iteratively* | *Launch & sustain adoption* | *Measure success & learn* |
 
 </div>
 
@@ -584,6 +584,148 @@ Working with users to identify long-term ownership models and maintenance approa
 </td>
 </tr>
 </table>
+---
+
+## 📈 Impact & Monitoring Phase
+*"How do we measure success and capture learning?"*
+
+<details>
+<summary><strong>🎯 Phase Overview</strong></summary>
+
+**Goal**: Systematically measure solution impact, capture organizational learning, and demonstrate value to guide improvements and future initiatives.
+
+**Key Activities**:
+- Impact measurement framework development
+- Success metrics definition and tracking
+- Economic value assessment and ROI calculation
+- Success story collection and knowledge sharing
+- Learning capture and continuous improvement
+
+**Typical Duration**: Ongoing throughout and after deployment
+**Source**: *Solution Co-Development Toolkit Narrative; NSITE Solution Project Requirements*
+
+</details>
+
+### 🛠️ Available Tools
+
+<table>
+<tr>
+<th width="25%">Tool</th>
+<th width="15%">Difficulty</th>
+<th width="15%">Duration</th>
+<th width="45%">Best For</th>
+</tr>
+<tr>
+<td>
+
+**🎓 [Designing for Impact 101 Guide](https://github.com/your-repo/issues/24)**
+
+</td>
+<td>
+
+🌱 Beginner
+
+</td>
+<td>
+
+2-3 hours
+
+</td>
+<td>
+
+Learning fundamental principles for creating solutions that drive measurable change. Perfect starting point.
+
+</td>
+</tr>
+<tr>
+<td>
+
+**📊 [Monitoring, Impact and Learning Plan Template](https://github.com/your-repo/issues/25)**
+
+</td>
+<td>
+
+📈 Intermediate
+
+</td>
+<td>
+
+4-6 hours
+
+</td>
+<td>
+
+Comprehensive framework for tracking performance, measuring outcomes, and capturing organizational learning.
+
+</td>
+</tr>
+<tr>
+<td>
+
+**🎯 [Indicator Development Guidance](https://github.com/your-repo/issues/26)**
+
+</td>
+<td>
+
+📈 Intermediate
+
+</td>
+<td>
+
+3-4 hours
+
+</td>
+<td>
+
+Creating specific, measurable indicators that capture real value and impact across multiple dimensions.
+
+</td>
+</tr>
+<tr>
+<td>
+
+**💰 [Economic Impact Assessment for EO Guidance](https://github.com/your-repo/issues/27)**
+
+</td>
+<td>
+
+🎯 Advanced
+
+</td>
+<td>
+
+1-2 weeks
+
+</td>
+<td>
+
+Calculating ROI, cost-benefit analysis, and financial value to demonstrate economic impact and justify investment.
+
+</td>
+</tr>
+<tr>
+<td>
+
+**📖 [Impact Story Collection Templates](https://github.com/your-repo/issues/28)**
+
+</td>
+<td>
+
+🌱 Beginner
+
+</td>
+<td>
+
+1-2 hours per story
+
+</td>
+<td>
+
+Ready-to-use formats for documenting and sharing success stories across different audiences and channels.
+
+</td>
+</tr>
+</table>
 
 ---
 
@@ -742,6 +884,8 @@ Keeping stakeholders informed of progress and demonstrating how their feedback s
 - 📋 [Requirements Definition Canvas](https://github.com/your-repo/issues/7) - Capture what users need
 - ✅ [Output Validation Checklist](https://github.com/your-repo/issues/9) - Verify you're on track
 - 📝 [Decision Documentation Template](https://github.com/your-repo/issues/22) - Keep records
+- 🎓 [Designing for Impact 101 Guide](https://github.com/your-repo/issues/24) - Learn impact fundamentals
+- 📖 [Impact Story Collection Templates](https://github.com/your-repo/issues/28) - Document success
 
 </details>
 
@@ -753,6 +897,8 @@ Keeping stakeholders informed of progress and demonstrating how their feedback s
 - 🏗️ [Co-Design Workshop Facilitator Manual](https://github.com/your-repo/issues/6)
 - 🧪 [User Testing Protocol](https://github.com/your-repo/issues/11)
 - 📚 [Training Material Development Kit](https://github.com/your-repo/issues/17)
+- 📊 [Monitoring, Impact and Learning Plan Template](https://github.com/your-repo/issues/25)
+- 🎯 [Indicator Development Guidance](https://github.com/your-repo/issues/26)
 
 </details>
 
@@ -764,6 +910,7 @@ Keeping stakeholders informed of progress and demonstrating how their feedback s
 - 🎯 [Service Concept Development Instructions](https://github.com/your-repo/issues/10)
 - 📊 [Usability Metrics Dashboard](https://github.com/your-repo/issues/13)
 - 📊 [Adoption Monitoring Framework](https://github.com/your-repo/issues/19)
+- 💰 [Economic Impact Assessment for EO Guidance](https://github.com/your-repo/issues/27)
 
 </details>
 
