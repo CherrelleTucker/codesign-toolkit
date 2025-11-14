@@ -48,15 +48,15 @@ graph LR
 
 ### Your 3-Step Journey
 
-1. **🔍 [Understand the Framework](framework-overview.md)** - *5 min read*
+1. **🔍 [Understand the Framework](🗺️%20framework-overview.md)** - *5 min read*
    - What is co-design and why it matters
    - Core principles and mindset shifts
 
-2. **📋 [Explore Tool Categories](tool-categories.md)** - *3 min read*
+2. **📋 [Explore Tool Categories](🛠️%20find-a-tool.md)** - *3 min read*
    - Browse tools by project phase
    - Find what fits your current needs
 
-3. **🚀 [Try Your First Tool](implementation-manual.md)** - *10 min setup*
+3. **🚀 [Try Your First Tool](📑%20instruction-manual.md)** - *10 min setup*
    - Step-by-step instructions
    - Tips for success
 
@@ -65,10 +65,10 @@ graph LR
 <details>
 <summary><strong>⚡ Experienced User? Jump Right In!</strong></summary>
 
-- 🔍 **[Browse All Tools](https://github.com/your-repo/issues?q=is%3Aissue+label%3Atool)** 
-- 📊 **[Phase-Specific Tools](tool-categories.md#by-phase)**
-- 🎯 **[Method Quick Reference](method-reference.md)**
-- 📚 **[Learning Resources](learning-resources.md)**
+- 🔍 **[Browse All Tools](https://github.com/CherrelleTucker/codesign-toolkit/issues?q=is%3Aissue+label%3Atool)** 
+- 📊 **[Tool Categories by Phase](🛠️%20find-a-tool.md)**
+- 🎯 **[Method Quick Reference](🔍%20method-reference.md)**
+- 📚 **[Learning Resources](🎓%20learning-resources.md)**
 
 </details>
 
@@ -114,16 +114,14 @@ graph LR
 
 ## 📖 Documentation Structure
 
-```
-📁 This Toolkit Contains:
-├── 🗺️  framework-overview.md      → The big picture and philosophy
-├── 🛠️  tool-categories.md         → Organized by type and phase
-├── 📋  implementation-manual.md   → Practical how-to instructions
-├── 🎯  method-reference.md        → Quick lookup for specific methods
-├── 📚  learning-resources.md      → Deepen your knowledge
-├── 🤝  collaboration-companion.md → Working effectively with users
-└── 📞  support-contact.md         → Get help when you need it
-```
+    📁 This Toolkit Contains:
+    ├── 🗺️  framework-overview.md      → [The big picture and philosophy](🗺️%20framework-overview.md)
+    ├── 🛠️  find-a-tool.md             → [Tool categories by type and phase](🛠️%20find-a-tool.md)
+    ├── 📑  instruction-manual.md      → [Practical how-to instructions](📑%20instruction-manual.md)
+    ├── 🔍  method-reference.md        → [Quick lookup for specific methods](🔍%20method-reference.md)
+    ├── 🎓  learning-resources.md      → [Deepen your knowledge](🎓%20learning-resources.md)
+    ├── 🤝  collaboration-companion.md → [Working effectively with users](🤝%20collaboration-companion.md)
+    └── 📞  support-contact.md         → [Get help when you need it](📞%20support-contact.md)
 
 ---
 
@@ -154,10 +152,10 @@ graph LR
 - [`🚀 deployment-tools`](../../labels/phase-deployment) - Sustainable adoption
 
 ### Option 3: Use Our Tool Finder
-[**🎯 Interactive Tool Finder →**](https://your-github-pages-url.github.io)
+[**🎯 Interactive Tool Finder →**](🛠️%20find-a-tool.md)
 
 ### Option 4: Start with Fundamentals
-[**📖 Framework Overview →**](framework-overview.md)
+[**📖 Framework Overview →**](🗺️%20framework-overview.md)
 
 ---
 
@@ -165,10 +163,10 @@ graph LR
 
 This toolkit grows stronger through community contributions:
 
-- **🐛 Report Issues**: Found a problem? [Let us know!](https://github.com/your-repo/issues/new/choose)
-- **💡 Suggest Tools**: Have a method that works? [Share it!](https://github.com/your-repo/issues/new?template=new-tool.md)
-- **📝 Improve Documentation**: See something unclear? [Submit a PR!](https://github.com/your-repo/pulls)
-- **💬 Join Discussions**: [Ask questions, share experiences](https://github.com/your-repo/discussions)
+- **🐛 Report Issues**: Found a problem? [Let us know!](https://github.com/CherrelleTucker/codesign-toolkit/issues/new/choose)
+- **💡 Suggest Tools**: Have a method that works? [Share it!](https://github.com/CherrelleTucker/codesign-toolkit/issues/new?template=new-tool.md)
+- **📝 Improve Documentation**: See something unclear? [Submit a PR!](https://github.com/CherrelleTucker/codesign-toolkit/pulls)
+- **💬 Join Discussions**: [Ask questions, share experiences](https://github.com/CherrelleTucker/codesign-toolkit/discussions)
 - **🏆 Show Appreciation**: [Learn how to give credit and share success stories](HOW-TO-ATTRIBUTE.md)
 
 ---
@@ -179,7 +177,7 @@ This toolkit grows stronger through community contributions:
 
 | 🎯 **Quick Questions** | 🛠️ **Technical Issues** | 📚 **Training Requests** |
 |:---:|:---:|:---:|
-| [GitHub Discussions](https://github.com/your-repo/discussions) | [Issue Tracker](https://github.com/your-repo/issues) | [Contact GSFC Support](support-contact.md) |
+| [GitHub Discussions](https://github.com/CherrelleTucker/codesign-toolkit/discussions) | [Issue Tracker](https://github.com/CherrelleTucker/codesign-toolkit/issues) | [Contact GSFC Support](📞%20support-contact.md) |
 
 </div>
 
@@ -206,8 +204,10 @@ This toolkit synthesizes best practices from:
 
 **🌍 Building better Earth observation solutions, together.**
 
-[![GitHub Issues](https://img.shields.io/github/issues/your-repo/co-design-toolkit?style=for-the-badge)](https://github.com/your-repo/issues)
-[![Contributors](https://img.shields.io/github/contributors/your-repo/co-design-toolkit?style=for-the-badge)](https://github.com/your-repo/graphs/contributors)
-[![Last Commit](https://img.shields.io/github/last-commit/your-repo/co-design-toolkit?style=for-the-badge)](https://github.com/your-repo/commits/main)
+[![GitHub Issues](https://img.shields.io/github/issues/CherrelleTucker/codesign-toolkit?style=for-the-badge)](https://github.com/CherrelleTucker/codesign-toolkit/issues)
+[![Contributors](https://img.shields.io/github/contributors/CherrelleTucker/codesign-toolkit?style=for-the-badge)](https://github.com/CherrelleTucker/codesign-toolkit/graphs/contributors)
+[![Last Commit](https://img.shields.io/github/last-commit/CherrelleTucker/codesign-toolkit?style=for-the-badge)](https://github.com/CherrelleTucker/codesign-toolkit/commits/main)
 
 </div>
+
+---
