@@ -23,3 +23,18 @@ Quick process for reviewing new tool submissions to maintain quality and consist
 
 ## Standard Responses
 **Approved:**
+```
+Thanks for this contribution! The tool has been reviewed and approved. It's now live in the toolkit.
+
+Next steps:
+- Watch for community questions
+- Consider adding usage examples as you see how people use it
+```
+
+**Needs Changes:**
+```
+Thanks for this contribution! A few things to address before approval:
+- [Specific issues to fix]
+- [Clear steps to resolve]
+
+Let me know if you need any clarification!
