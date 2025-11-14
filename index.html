@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User-Centered Design Guidance</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+            background-attachment: fixed;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            animation: fadeIn 0.8s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+            }
+            50% {
+                transform: scale(1.1) rotate(180deg);
+            }
+        }
+        
+        header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
+            animation: slideDown 0.6s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        header p {
+            font-size: 1.3em;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            animation: slideDown 0.8s ease-out 0.2s both;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .sticky-nav {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            padding: 15px 20px;
+            margin: -40px -40px 30px -40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .sticky-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .sticky-nav a:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+        }
+        
+        h2 {
+            color: #1e3a8a;
+            font-size: 1.8em;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid;
+            border-image: linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd) 1;
+            animation: slideInLeft 0.6s ease-out;
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        h3 {
+            color: #2563eb;
+            font-size: 1.4em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            position: relative;
+            padding-left: 15px;
+        }
+        
+        h3::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 70%;
+            background: linear-gradient(180deg, #3b82f6, #60a5fa);
+            border-radius: 2px;
+        }
+        
+        h4 {
+            color: #1e40af;
+            font-size: 1.1em;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        .intro-box {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 5px solid #3b82f6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .intro-box:hover {
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .definition-box {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-left: 5px solid #10b981;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .definition-box:hover {
+            box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .definition-box h4 {
+            color: #059669;
+            margin-top: 0;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 5px solid #f59e0b;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .warning-box:hover {
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .phase-section {
+            background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .phase-section:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+        }
+        
+        .phase-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            padding: 12px 20px;
+            margin: -20px -20px 15px -20px;
+            border-radius: 12px 12px 0 0;
+            font-weight: bold;
+            font-size: 1.1em;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        
+        th, td {
+            padding: 14px;
+            text-align: left;
+            border: 1px solid #ddd;
+            transition: background-color 0.2s ease;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+        
+        tbody tr:hover {
+            background-color: #eff6ff;
+            transform: scale(1.01);
+        }
+        
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 20px 0;
+        }
+        
+        .principle-card {
+            background: linear-gradient(135deg, white 0%, #fafafa 100%);
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .principle-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd);
+        }
+        
+        .principle-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 24px rgba(59, 130, 246, 0.25);
+            border-color: #2563eb;
+        }
+        
+        .principle-card h4 {
+            color: #1e3a8a;
+            margin-top: 0;
+            font-size: 1.2em;
+        }
+        
+        .checklist {
+            background: #fff;
+            border: 1px solid #d1d5db;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+        
+        .checklist-item::before {
+            content: "□";
+            font-size: 1.5em;
+            margin-right: 10px;
+            color: #3b82f6;
+        }
+        
+        footer {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+        }
+        
+        footer p {
+            margin: 5px 0;
+            opacity: 0.9;
+        }
+        
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 1000;
+            font-size: 24px;
+        }
+        
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .scroll-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.5);
+        }
+        
+        .toc {
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 2px solid #e5e7eb;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .toc h3 {
+            margin-bottom: 15px;
+            padding-left: 0;
+        }
+        
+        .toc h3::before {
+            display: none;
+        }
+        
+        .toc a {
+            color: #2563eb;
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+            margin: 5px 0;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        
+        .toc a:hover {
+            background: linear-gradient(90deg, #eff6ff, transparent);
+            border-left-color: #3b82f6;
+            transform: translateX(5px);
+            text-decoration: none;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .scroll-to-top {
+                display: none;
+            }
+            .sticky-nav {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            header {
+                padding: 30px 20px;
+            }
+            header h1 {
+                font-size: 1.8em;
+            }
+            header p {
+                font-size: 1em;
+            }
+            .principles-grid {
+                grid-template-columns: 1fr;
+            }
+            .sticky-nav {
+                margin: -20px -20px 20px -20px;
+                padding: 10px;
+            }
+            .sticky-nav a {
+                font-size: 0.8em;
+                padding: 6px 12px;
+            }
+            table {
+                font-size: 0.9em;
+            }
+            th, td {
+                padding: 10px 8px;
+            }
+            .scroll-to-top {
+                bottom: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>User-Centered Design Guidance</h1>
+            <p>A Practical Framework for Solution Co-Development</p>
+        </header>
+        
+        <div class="content">
+            <nav class="sticky-nav">
+                <a href="#section1">Principles</a>
+                <a href="#section2">Framework</a>
+                <a href="#section3">Phases</a>
+                <a href="#section4">Methods</a>
+                <a href="#section5">Touchpoints</a>
+                <a href="#section6">Outputs</a>
+                <a href="#section7">Best Practices</a>
+            </nav>
+            
+            <div class="intro-box">
+                <h3 style="margin-top:0;">Purpose</h3>
+                <p><strong>User-Centered Design (UCD)</strong> guidance provides practical methods for integrating real user workflows, abilities, constraints, and decision needs into the technical design and build process throughout solution co-development.</p>
+            </div>
+            
+            <div class="definition-box">
+                <h4>What is User-Centered Design?</h4>
+                <p>User-Centered Design is a collaborative approach to product and solution development where developers work together with end users to formulate solutions and implementation plans. It continuously seeks to integrate user feedback into the design and redesign loop, adopting stakeholder priorities to build functional requirements and outputs that ensure interface logic, data interactions, and output formats reflect how people and institutions will actually use them.</p>
+            </div>
+            
+            <div class="toc">
+                <h3>Contents</h3>
+                <a href="#section1">1. Core Principles of User-Centered Design</a>
+                <a href="#section2">2. The UCD Process Framework</a>
+                <a href="#section3">3. Phase-Based UCD Activities</a>
+                <a href="#section4">4. Key UCD Methods and Tools</a>
+                <a href="#section5">5. Co-Design Touchpoints</a>
+                <a href="#section6">6. Outputs and Deliverables</a>
+                <a href="#section7">7. Best Practices and Common Pitfalls</a>
+            </div>
+            
+            <h2 id="section1">1. Core Principles of User-Centered Design</h2>
+            
+            <div class="principles-grid">
+                <div class="principle-card">
+                    <h4>User Focus</h4>
+                    <p>Design solutions with users, not for them. Engage end users throughout the entire development lifecycle to ensure solutions address real needs and contexts.</p>
+                </div>
+                
+                <div class="principle-card">
+                    <h4>Iterative Design</h4>
+                    <p>Build, test, learn, and refine continuously. Use user feedback to inform successive design iterations and improvements.</p>
+                </div>
+                
+                <div class="principle-card">
+                    <h4>Context Awareness</h4>
+                    <p>Understand user workflows, institutional constraints, decision-making processes, and the environments where solutions will be deployed.</p>
+                </div>
+                
+                <div class="principle-card">
+                    <h4>Usability First</h4>
+                    <p>Ensure solutions are accessible, intuitive, and actionable upon completion, fitting seamlessly into existing agency workflows.</p>
+                </div>
+                
+                <div class="principle-card">
+                    <h4>Collaborative Planning</h4>
+                    <p>Foster shared investment between developers, implementers, and users through transparent communication and joint decision-making.</p>
+                </div>
+                
+                <div class="principle-card">
+                    <h4>Evidence-Based</h4>
+                    <p>Ground design decisions in user research, needs assessments, and validated feedback rather than assumptions.</p>
+                </div>
+            </div>
+            
+            <h2 id="section2">2. The UCD Process Framework</h2>
+            
+            <p>User-centered design operates as a continuous cycle integrated across all phases of solution development:</p>
+            
+            <table>
+                <tr>
+                    <th>Stage</th>
+                    <th>Focus</th>
+                    <th>Key Activities</th>
+                </tr>
+                <tr>
+                    <td><strong>Understand</strong></td>
+                    <td>User needs, contexts, and constraints</td>
+                    <td>Needs assessment, stakeholder mapping, workflow analysis, information flow mapping</td>
+                </tr>
+                <tr>
+                    <td><strong>Define</strong></td>
+                    <td>Requirements and success criteria</td>
+                    <td>Co-define functional requirements, technical specifications, usability criteria, output formats</td>
+                </tr>
+                <tr>
+                    <td><strong>Design</strong></td>
+                    <td>Solution concepts and prototypes</td>
+                    <td>Interface design, system interaction flows, data architecture, collaborative workshops</td>
+                </tr>
+                <tr>
+                    <td><strong>Test</strong></td>
+                    <td>Usability and functionality</td>
+                    <td>User testing, prototype iteration, feedback collection, validation sessions</td>
+                </tr>
+                <tr>
+                    <td><strong>Refine</strong></td>
+                    <td>Improvements based on feedback</td>
+                    <td>Design adjustments, barrier removal, performance optimization</td>
+                </tr>
+                <tr>
+                    <td><strong>Deploy</strong></td>
+                    <td>Training and adoption</td>
+                    <td>Soft launch, training development, documentation, sustained engagement</td>
+                </tr>
+            </table>
+            
+            <div class="warning-box">
+                <strong>Important:</strong> UCD is not a linear process. You will cycle through these stages multiple times, refining and improving your solution based on continuous user engagement and feedback.
+            </div>
+            
+            <h2 id="section3">3. Phase-Based UCD Activities</h2>
+            
+            <div class="phase-section">
+                <div class="phase-header">Phase 1: Assess Needs & Opportunities</div>
+                
+                <h4>Goal</h4>
+                <p>Identify core needs, relevant actors, and entry points through participatory, inclusive engagement.</p>
+                
+                <h4>UCD Activities</h4>
+                <ul>
+                    <li><strong>Understand US government agency partners:</strong> How they work, what decisions they make, and how they use Earth observations</li>
+                    <li><strong>Identify decision contexts:</strong> Understand timing of decisions and actions, information flows, and data used (historical, real-time, predictions, scenario modeling)</li>
+                    <li><strong>Conduct needs assessments:</strong> Go beyond technical requirements to examine institutional, behavioral, and accessibility factors</li>
+                    <li><strong>Map stakeholders:</strong> Identify users, decision-makers, intermediaries, and their relationships</li>
+                    <li><strong>Define agency champions:</strong> Identify and build relationships with key stakeholders who can actively participate in co-design</li>
+                </ul>
+                
+                <h4>Key Questions to Answer</h4>
+                <div class="checklist">
+                    <div class="checklist-item">Who are the end users and what are their roles?</div>
+                    <div class="checklist-item">What problems are they trying to solve?</div>
+                    <div class="checklist-item">What are their current workflows and decision-making processes?</div>
+                    <div class="checklist-item">What constraints do they face (technical, institutional, temporal)?</div>
+                    <div class="checklist-item">What data and information do they currently use and when?</div>
+                    <div class="checklist-item">What gaps exist in their current systems?</div>
+                    <div class="checklist-item">How does information flow in their organization?</div>
+                </div>
+            </div>
+            
+            <div class="phase-section">
+                <div class="phase-header">Phase 2: Solution Co-Design</div>
+                
+                <h4>Goal</h4>
+                <p>Work directly with stakeholders to co-create feasible, locally owned solutions that fit real-world use contexts.</p>
+                
+                <h4>UCD Activities</h4>
+                <ul>
+                    <li><strong>Run co-design workshops:</strong> Structure participatory design sessions to align scientists and users around solution goals</li>
+                    <li><strong>Define user journeys:</strong> Map how users will interact with the solution from start to finish</li>
+                    <li><strong>Co-specify functional requirements:</strong> Work with users to define what the solution must do, considering their actual workflows</li>
+                    <li><strong>Design system interactions:</strong> Determine how users will interact with interfaces, data inputs, and outputs</li>
+                    <li><strong>Establish usability criteria:</strong> Define what makes the solution easy to use and accessible for your user audience</li>
+                    <li><strong>Validate data formats and outputs:</strong> Ensure deliverables match user needs for spatial resolution, temporal frequency, latency, file types, etc.</li>
+                </ul>
+                
+                <h4>Co-Design Workshop Elements</h4>
+                <ol>
+                    <li><strong>Pre-Workshop:</strong>
+                        <ul>
+                            <li>Share baseline information gathered from needs assessment</li>
+                            <li>Send pre-workshop questionnaire if knowledge gaps exist</li>
+                            <li>Prepare facilitation materials and exercises</li>
+                        </ul>
+                    </li>
+                    <li><strong>During Workshop:</strong>
+                        <ul>
+                            <li>Present service/solution concept for validation</li>
+                            <li>Facilitate collaborative requirement definition</li>
+                            <li>Map user workflows and decision points</li>
+                            <li>Identify potential barriers and solutions</li>
+                            <li>Document design decisions and rationale</li>
+                        </ul>
+                    </li>
+                    <li><strong>Post-Workshop:</strong>
+                        <ul>
+                            <li>Synthesize feedback and decisions</li>
+                            <li>Develop technical requirements documentation</li>
+                            <li>Create shared service vision document</li>
+                            <li>Plan for next touchpoint</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+            
+            <div class="phase-section">
+                <div class="phase-header">Phase 3: Technical Prototyping & Co-Development</div>
+                
+                <h4>Goal</h4>
+                <p>Translate user needs into functional, user-centered technical solutions through iterative testing and refinement.</p>
+                
+                <h4>UCD Activities</h4>
+                <ul>
+                    <li><strong>Build initial prototypes:</strong> Develop working versions of key solution components based on co-designed requirements</li>
+                    <li><strong>Conduct user testing:</strong> Engage solution users during development to ensure usability and alignment with needs</li>
+                    <li><strong>Validate UI and workflows:</strong> Test interface designs, data inputs, and output formats with actual users</li>
+                    <li><strong>Iterate design based on feedback:</strong> Make adjustments to address usability barriers and user preferences</li>
+                    <li><strong>Document design decisions:</strong> Record why certain design choices were made based on user input</li>
+                    <li><strong>Test prototypes at key decision points:</strong> Involve users when making significant technical or design choices</li>
+                </ul>
+                
+                <h4>User Testing Best Practices</h4>
+                <ul>
+                    <li>Test early and often with small groups before full deployment</li>
+                    <li>Observe users actually using the solution, don't just ask their opinion</li>
+                    <li>Focus on task completion: Can users accomplish what they need to do?</li>
+                    <li>Identify points of confusion or friction in the workflow</li>
+                    <li>Ask open-ended questions: "What would you expect to happen if...?"</li>
+                    <li>Document both successes and failures to guide iteration</li>
+                    <li>Test with diverse user types if your audience varies in technical skill or role</li>
+                </ul>
+            </div>
+            
+            <div class="phase-section">
+                <div class="phase-header">Phase 4: Deployment, Training & Sustained Engagement</div>
+                
+                <h4>Goal</h4>
+                <p>Ensure effective solution adoption through proper training, support, and continued user engagement.</p>
+                
+                <h4>UCD Activities</h4>
+                <ul>
+                    <li><strong>Soft launch with co-design participants:</strong> Release solution first to stakeholders involved in development for final feedback</li>
+                    <li><strong>Develop targeted training:</strong> Create training materials that match user skill levels and learning preferences</li>
+                    <li><strong>Gather deployment feedback:</strong> Collect input on prototypes, training quality, interfaces, and documentation</li>
+                    <li><strong>Provide ongoing support:</strong> Establish channels for users to ask questions and report issues</li>
+                    <li><strong>Monitor adoption and use:</strong> Track how users are actually using the solution in practice</li>
+                    <li><strong>Plan for sustainability:</strong> Work with users to identify long-term ownership and maintenance approaches</li>
+                </ul>
+                
+                <h4>Training Development Considerations</h4>
+                <ul>
+                    <li>Baseline user capacities and skill gaps</li>
+                    <li>Preferred learning formats (hands-on, online, documentation, video)</li>
+                    <li>Time availability for training</li>
+                    <li>Technical infrastructure for training delivery</li>
+                    <li>Need for follow-up or refresher training</li>
+                    <li>Opportunities to build user community and peer support</li>
+                </ul>
+            </div>
+            
+            <h2 id="section4">4. Key UCD Methods and Tools</h2>
+            
+            <h3>User Research Methods</h3>
+            <ul>
+                <li><strong>Discovery Interviews:</strong> Semi-structured conversations to understand user needs, workflows, and challenges</li>
+                <li><strong>Needs Assessment Surveys:</strong> Structured data collection to validate problem statements and priorities</li>
+                <li><strong>Workflow Analysis:</strong> Observation and mapping of how users currently complete tasks</li>
+                <li><strong>Contextual Inquiry:</strong> Observing users in their actual work environment</li>
+                <li><strong>Stakeholder Mapping:</strong> Identifying and analyzing relationships between users, decision-makers, and intermediaries</li>
+            </ul>
+            
+            <h3>Design and Specification Tools</h3>
+            <ul>
+                <li><strong>User Requirement Checklists:</strong> Structured templates to capture user needs for deliverables</li>
+                <li><strong>System Interaction Flows:</strong> Diagrams showing how users move through the solution</li>
+                <li><strong>Interface Mockups:</strong> Visual representations of screens and layouts for user feedback</li>
+                <li><strong>Technical Requirements Documents:</strong> Specifications that translate user needs into development requirements</li>
+                <li><strong>Data Management Plans:</strong> Agreements on data formats, sharing, quality, and governance</li>
+            </ul>
+            
+            <h3>Testing and Validation Methods</h3>
+            <ul>
+                <li><strong>Usability Testing:</strong> Structured sessions where users attempt specific tasks with the solution</li>
+                <li><strong>Prototype Review Sessions:</strong> Collaborative meetings to gather feedback on working versions</li>
+                <li><strong>A/B Testing:</strong> Comparing two design options to see which works better for users</li>
+                <li><strong>Validation Workshops:</strong> Group sessions to confirm design decisions meet user needs</li>
+                <li><strong>Feedback Surveys:</strong> Structured collection of user opinions and satisfaction metrics</li>
+            </ul>
+            
+            <h2 id="section5">5. Co-Design Touchpoints</h2>
+            
+            <p>User-centered design requires regular engagement with end users at specific points in the solution lifecycle. These "touchpoints" ensure solutions remain aligned with user needs and contexts.</p>
+            
+            <table>
+                <tr>
+                    <th>Touchpoint</th>
+                    <th>When</th>
+                    <th>Purpose</th>
+                </tr>
+                <tr>
+                    <td>Pre-Formulation Meeting</td>
+                    <td>Before detailed planning</td>
+                    <td>Build relationships, share solution concept, gather initial feedback on proposed approach</td>
+                </tr>
+                <tr>
+                    <td>Co-Design Invitation</td>
+                    <td>Early formulation</td>
+                    <td>Invite stakeholders to participate actively in solution development</td>
+                </tr>
+                <tr>
+                    <td>Requirements Verification</td>
+                    <td>Formulation phase</td>
+                    <td>Confirm technical parameters, discuss time commitments, validate key solution characteristics</td>
+                </tr>
+                <tr>
+                    <td>Design Review Sessions</td>
+                    <td>Throughout development</td>
+                    <td>Present design decisions, gather input on interfaces and workflows, validate approach</td>
+                </tr>
+                <tr>
+                    <td>Prototype Testing</td>
+                    <td>Implementation phase</td>
+                    <td>Test working versions with users, identify usability issues, refine based on feedback</td>
+                </tr>
+                <tr>
+                    <td>Soft Launch</td>
+                    <td>Before full release</td>
+                    <td>Release to co-design participants for final testing and training feedback</td>
+                </tr>
+                <tr>
+                    <td>Progress Updates</td>
+                    <td>Regular intervals</td>
+                    <td>Keep users informed, maintain engagement, gather ongoing feedback</td>
+                </tr>
+                <tr>
+                    <td>Sustainability Planning</td>
+                    <td>Before closeout</td>
+                    <td>Discuss long-term ownership, maintenance, and transition planning</td>
+                </tr>
+            </table>
+            
+            <h2 id="section6">6. Outputs and Deliverables</h2>
+            
+            <h3>User-Centered Design Outputs Include:</h3>
+            
+            <h4>Requirements Documentation</h4>
+            <ul>
+                <li>User requirements checklists (spatial resolution, temporal frequency, latency, file formats, etc.)</li>
+                <li>Functional requirements specifications</li>
+                <li>Usability criteria and success metrics</li>
+                <li>Technical specifications informed by user needs</li>
+            </ul>
+            
+            <h4>Design Artifacts</h4>
+            <ul>
+                <li>System interaction flows and user journeys</li>
+                <li>Interface requirements and mockups</li>
+                <li>Data input/output format specifications</li>
+                <li>Workflow integration plans</li>
+            </ul>
+            
+            <h4>Testing and Validation</h4>
+            <ul>
+                <li>User testing reports and feedback summaries</li>
+                <li>Prototype evaluation results</li>
+                <li>Usability issue logs and resolution tracking</li>
+                <li>Validated design decisions documentation</li>
+            </ul>
+            
+            <h4>Training and Support Materials</h4>
+            <ul>
+                <li>User guides and documentation</li>
+                <li>Training materials (slides, videos, hands-on exercises)</li>
+                <li>Quick-start guides</li>
+                <li>FAQ documents</li>
+                <li>Technical support resources</li>
+            </ul>
+            
+            <h4>Planning Documents</h4>
+            <ul>
+                <li>Co-design strategy and engagement plans</li>
+                <li>Stakeholder engagement schedules</li>
+                <li>Adoption and sustainability plans</li>
+                <li>Solution implementation plans</li>
+            </ul>
+            
+            <h2 id="section7">7. Best Practices and Common Pitfalls</h2>
+            
+            <h3>Best Practices</h3>
+            
+            <div class="principles-grid">
+                <div class="principle-card">
+                    <h4>Engage Early</h4>
+                    <p>Involve users from the very beginning. Don't wait until you have a prototype to start gathering user input.</p>
+                </div>
+                
+                <div class="principle-card">
+                    <h4>Listen Actively</h4>
+                    <p>Focus on understanding user needs rather than defending your solution ideas. Users are experts in their own workflows.</p>
+                </div>
+                
+                <div class="principle-card">
+                    <h4>Test Assumptions</h4>
+                    <p>Validate your assumptions about user needs, preferences, and constraints through actual user feedback.</p>
+                </div>
+                
+                <div class="principle-card">
+                    <h4>Document Everything</h4>
+                    <p>Record design decisions, user feedback, and the rationale behind choices for future reference and transparency.</p>
+                </div>
+                
+                <div class="principle-card">
+                    <h4>Iterate Often</h4>
+                    <p>Make small improvements frequently based on user feedback rather than waiting for perfect solutions.</p>
+                </div>
+                
+                <div class="principle-card">
+                    <h4>Build Trust</h4>
+                    <p>Demonstrate that user input leads to real changes. Show how feedback shaped the solution.</p>
+                </div>
+            </div>
+            
+            <h3>Common Pitfalls to Avoid</h3>
+            
+            <div class="warning-box">
+                <h4>❌ Building Before Understanding</h4>
+                <p>Don't start technical development before thoroughly understanding user needs, workflows, and contexts. This leads to solutions that don't fit actual use cases.</p>
+            </div>
+            
+            <div class="warning-box">
+                <h4>❌ One-Way Communication</h4>
+                <p>Avoid treating stakeholder engagement as information delivery rather than collaborative design. Co-design requires genuine two-way dialogue.</p>
+            </div>
+            
+            <div class="warning-box">
+                <h4>❌ Assuming Technical = Usable</h4>
+                <p>Just because a solution works technically doesn't mean it's usable. Always validate usability with actual users in realistic scenarios.</p>
+            </div>
+            
+            <div class="warning-box">
+                <h4>❌ Ignoring Context</h4>
+                <p>Don't design in isolation. Consider institutional constraints, existing workflows, technical infrastructure, and decision-making timelines.</p>
+            </div>
+            
+            <div class="warning-box">
+                <h4>❌ Token Engagement</h4>
+                <p>Avoid going through the motions of user engagement without genuinely incorporating feedback. Users will disengage if their input isn't valued.</p>
+            </div>
+            
+            <div class="warning-box">
+                <h4>❌ Late-Stage Testing</h4>
+                <p>Don't wait until development is nearly complete to test with users. Late-stage changes are costly and may not be feasible.</p>
+            </div>
+            
+            <div class="warning-box">
+                <h4>❌ Assuming One-Size-Fits-All</h4>
+                <p>Remember that different user types may have different needs, skill levels, and use cases. Design for diversity within your user base.</p>
+            </div>
+            
+            <h3>Success Factors</h3>
+            
+            <ol>
+                <li><strong>Dedicated Stakeholder Engagement Lead:</strong> Assign someone specifically responsible for managing user relationships and co-design activities</li>
+                <li><strong>Sufficient Time and Resources:</strong> Budget adequate time and funding for user research, workshops, testing, and iteration</li>
+                <li><strong>Clear Communication:</strong> Keep users regularly informed of progress, decisions, and how their feedback was used</li>
+                <li><strong>Flexibility:</strong> Be prepared to adjust plans based on user feedback, even if it means changing initial assumptions</li>
+                <li><strong>Cross-Functional Collaboration:</strong> Ensure technical teams, scientists, and user engagement specialists work together closely</li>
+                <li><strong>Measurable Criteria:</strong> Define clear usability criteria and success metrics that can be evaluated with users</li>
+                <li><strong>Sustained Engagement:</strong> Maintain user involvement throughout the entire lifecycle, not just at the beginning or end</li>
+            </ol>
+            
+            <div class="intro-box">
+                <h3>Remember</h3>
+                <p>User-centered design is not just a set of methods—it's a mindset. It requires humility, curiosity, and genuine commitment to understanding and serving your users. When done well, UCD ensures that solutions are not only technically sound but also readily adoptable, integrated into agency workflows, and ultimately effective in helping users make better decisions.</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>User-Centered Design Guidance | Solution Co-Development Toolkit</p>
+            <p>For questions or support, contact your Stakeholder Engagement Program team</p>
+        </footer>
+    </div>
+    
+    <div class="scroll-to-top" id="scrollToTop" onclick="scrollToTop()">
+        ↑
+    </div>
+    
+    <script>
+        // Scroll to top functionality
+        window.addEventListener('scroll', function() {
+            const scrollButton = document.getElementById('scrollToTop');
+            if (window.pageYOffset > 300) {
+                scrollButton.classList.add('visible');
+            } else {
+                scrollButton.classList.remove('visible');
+            }
+        });
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offset = 80; // Account for sticky nav
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+                    
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Add animation to elements as they come into view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all major sections
+        document.querySelectorAll('.phase-section, .principle-card, .warning-box').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease-out';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
