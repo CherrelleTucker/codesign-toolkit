@@ -158,6 +158,7 @@ This toolkit grows stronger through community contributions:
 - **💡 Suggest Tools**: Have a method that works? [Share it!](https://github.com/your-repo/issues/new?template=new-tool.md)
 - **📝 Improve Documentation**: See something unclear? [Submit a PR!](https://github.com/your-repo/pulls)
 - **💬 Join Discussions**: [Ask questions, share experiences](https://github.com/your-repo/discussions)
+- **🏆 Show Appreciation**: [Learn how to give credit and share success stories](HOW-TO-ATTRIBUTE.md)
 
 ---
 
