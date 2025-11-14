@@ -28,7 +28,8 @@
 
 ---
 
-## 📝 How to Cite This Toolkit
+<details>
+  <summary><h2>📝 How to Cite This Toolkit</h2></summary>
 
 ### **In Academic Publications**
 
@@ -77,10 +78,12 @@ Co-design methodologies: NASA Co-Design Toolkit
 Original sources: NASA NSITE, SERVIR, MSFC programs
 Toolkit available at: [repository URL]
 ```
+</details>
 
 ---
 
-## 🌟 Ways to Show Appreciation
+<details>
+  <summary><h2>🌟 Ways to Show Appreciation</h2></summary>
 
 ### **🔗 Link and Reference (Easy)**
 
@@ -142,9 +145,12 @@ Post in our [GitHub Discussions](https://github.com/your-repo/discussions) about
 - Mentor other practitioners using the toolkit
 - Participate in virtual office hours or community events
 
+</details>
+
 ---
 
-## 📈 How We Measure Success
+<details>
+  <summary><h2> 📈 How We Measure Success</h2></summary>
 
 ### **Usage Metrics We Track**
 
@@ -198,9 +204,12 @@ Post in our [GitHub Discussions](https://github.com/your-repo/discussions) about
 - "Connected with other practitioners through the GitHub discussions"
 - "Presented our toolkit-based approach at [conference], inspiring others"
 
+</details>
+
 ---
 
-## 🎪 Special Recognition Opportunities
+<details>
+  <summary><h2>🎪 Special Recognition Opportunities</h2></summary>
 
 ### **NASA Spotlights and Features**
 
@@ -245,6 +254,8 @@ We periodically feature outstanding toolkit applications in:
 - Best Community Contribution
 - Most Impactful Success Story
 - Excellence in Cross-Agency Collaboration
+
+</details>
 
 ---
 
