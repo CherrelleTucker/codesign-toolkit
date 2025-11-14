@@ -177,6 +177,74 @@ This toolkit evolves through community contributions:
 
 ---
 
+## 🤖 AI-Assisted Development Transparency
+
+### **ChatGSFC Integration and AI Assistance**
+
+**Tool Used:** ChatGSFC - NASA's secure implementation of ChatGPT
+**Role in Development:** Content synthesis, initial drafting, and structural organization
+
+**AI Contribution Process:**
+1. **Source Material Analysis:** ChatGSFC analyzed and synthesized content from the documented NASA, SERVIR, and MSFC source materials
+2. **Initial Drafting:** AI generated initial tool descriptions, framework documentation, and organizational structures
+3. **Content Structuring:** AI organized complex methodologies into accessible, actionable formats
+4. **Template Creation:** AI developed consistent templates and formatting for tool documentation
+
+**Human Oversight and Control:**
+- **📋 Human Review:** All AI-generated content reviewed by NASA personnel familiar with co-design practices
+- **🔧 Engineering and Modification:** Content modified, enhanced, and adapted based on practical implementation experience
+- **✅ Final Approval:** All materials approved by subject matter experts before publication
+- **🎯 Strategic Direction:** AI followed human-defined goals, structure, and quality standards
+
+**What AI Did:**
+- Synthesized multiple source documents into coherent frameworks
+- Generated consistent formatting and visual organization
+- Created initial drafts of tool instructions and templates
+- Organized complex information into user-friendly structures
+
+**What AI Did NOT Do:**
+- Create new methodologies or approaches (all based on existing NASA sources)
+- Make decisions about program policy or official NASA positions
+- Access any classified or restricted information
+- Operate without human supervision and approval
+
+### **Quality Assurance Process**
+
+**Human Validation Steps:**
+1. **Source Verification:** All AI references to source materials fact-checked against original documents
+2. **Technical Accuracy:** Tool instructions validated by practitioners with real-world experience
+3. **Policy Alignment:** Content reviewed for consistency with NASA and agency requirements
+4. **Usability Testing:** Draft tools tested with actual co-design practitioners
+5. **Attribution Accuracy:** All source citations verified and properly formatted
+
+**Transparency Commitment:**
+- AI assistance is disclosed in all relevant documentation
+- Original source materials remain the authoritative references
+- Community feedback helps identify any AI-introduced errors or inconsistencies
+- Regular review ensures continued accuracy and relevance
+
+### **Benefits of AI-Assisted Development**
+
+**Efficiency Gains:**
+- Rapid synthesis of extensive source documentation
+- Consistent formatting and organization across tools
+- Quick iteration on structure and presentation
+- Accelerated initial drafting of comprehensive documentation
+
+**Quality Improvements:**
+- Systematic organization of complex methodologies
+- Consistent terminology and cross-references
+- Comprehensive coverage of source materials
+- User-friendly presentation of technical content
+
+**Limitations and Safeguards:**
+- AI cannot replace human expertise in co-design practices
+- All methodological decisions made by human practitioners
+- Regular human review ensures accuracy and relevance
+- Community feedback provides ongoing quality assurance
+
+---
+
 ## 📄 Intellectual Property and Usage Rights
 
 ### **NASA Materials**
@@ -261,3 +329,5 @@ Original sources: [list relevant program materials].
 **Questions about attribution? [Contact Us](support-contact.md)**
 
 </div>
+
+---
