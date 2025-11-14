@@ -78,27 +78,37 @@ graph LR
 
 <div align="center">
 
-| 👥 **[Users & Stakeholders](../../issues/1)** | ⚙️ **[Technical Co-Development](../../issues/2)** | 🏛️ **[Organizational & Process](../../issues/3)** |
-|:---:|:---:|:---:|
-| *Understanding and engaging with people* | *Building and testing with users* | *Managing co-design at scale* |
-| Stakeholder Mapping | User Testing | Project Planning |
-| Discovery Interviews | Prototype Reviews | Training Development |
-| Collaboration Workshops | Technical Validation | Adoption Monitoring |
-| [*Explore Category →*](../../issues/1) | [*Explore Category →*](../../issues/2) | [*Explore Category →*](../../issues/3) |
+| 👥 **[Users & Stakeholders](../../issues/1)** | ⚙️ **[Technical Co-Development](../../issues/2)** |
+|:---:|:---:|
+| *Understanding and engaging with people* | *Building and testing with users* |
+| Stakeholder Mapping | User Testing |
+| Discovery Interviews | Prototype Reviews |
+| Collaboration Workshops | Technical Validation |
+| [*Explore Category →*](../../issues/1) | [*Explore Category →*](../../issues/2) |
+
+| 🏛️ **[Organizational & Process](../../issues/3)** | 📈 **[Impact & Monitoring](../../issues/4)** |
+|:---:|:---:|
+| *Managing co-design at scale* | *Measuring success and learning* |
+| Project Planning | Impact Assessment |
+| Training Development | Success Metrics |
+| Adoption Monitoring | ROI Analysis |
+| [*Explore Category →*](../../issues/3) | [*Explore Category →*](../../issues/4) |
 
 </div>
 
 ### 🎯 Quick Tool Finder
 
 **By Experience Level:**
-- 🌱 **New to Co-Design?** Start with [Users & Stakeholders tools](../../issues/2)
-- 📈 **Building Solutions?** Focus on [Technical Co-Development tools](../../issues/3)  
-- 🎯 **Scaling Practices?** Use [Organizational & Process tools](../../issues/4)
+- 🌱 **New to Co-Design?** Start with [Users & Stakeholders tools](../../issues/1)
+- 📈 **Building Solutions?** Focus on [Technical Co-Development tools](../../issues/2)  
+- 🎯 **Scaling Practices?** Use [Organizational & Process tools](../../issues/3)
+- 📊 **Measuring Impact?** Use [Impact & Monitoring tools](../../issues/4)
 
 **By Current Need:**
-- 🤔 *"I don't know my users"* → [Users & Stakeholders Category](../../issues/2)
-- 🛠️ *"I'm building but need feedback"* → [Technical Co-Development Category](../../issues/3)
-- 📋 *"I need systematic processes"* → [Organizational & Process Category](../../issues/4)
+- 🤔 *"I don't know my users"* → [Users & Stakeholders Category](../../issues/1)
+- 🛠️ *"I'm building but need feedback"* → [Technical Co-Development Category](../../issues/2)
+- 📋 *"I need systematic processes"* → [Organizational & Process Category](../../issues/3)
+- 📊 *"I need to show value/impact"* → [Impact & Monitoring Category](../../issues/4)
 
 ---
 
@@ -135,6 +145,8 @@ graph LR
 - [`👥 Users & Stakeholders`](../../issues/1) - Understanding and engaging with people
 - [`⚙️ Technical Co-Development`](../../issues/2) - Building and testing with users
 - [`🏛️ Organizational & Process`](../../issues/3) - Managing co-design at scale
+- [`📈 Impact & Monitoring`](../../issues/4) - Measuring success and organizational learning
+- [`📊 impact-monitor`](../../labels/impact-monitor) - Measuring success and learning
 
 ### Option 2: Browse All Tools by Labels  
 - [`🔍 discovery-tools`](../../labels/phase-discovery) - Understanding user needs
