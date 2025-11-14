@@ -78,7 +78,7 @@ graph LR
 
 <div align="center">
 
-| 👥 **[Users & Stakeholders](../../issues/1)** | ⚙️ **[Technical Co-Development](../../issues/2)** |
+| 👥 **[Users & Stakeholders](../../issues/15)** | ⚙️ **[Technical Co-Development](../../issues/9)** |
 |:---:|:---:|
 | *Understanding and engaging with people* | *Building and testing with users* |
 | Stakeholder Mapping | User Testing |
@@ -86,7 +86,7 @@ graph LR
 | Collaboration Workshops | Technical Validation |
 | [*Explore Category →*](../../issues/1) | [*Explore Category →*](../../issues/2) |
 
-| 🏛️ **[Organizational & Process](../../issues/3)** | 📈 **[Impact & Monitoring](../../issues/4)** |
+| 🏛️ **[Organizational & Process](../../issues/2)** | 📈 **[Impact & Monitoring](../../issues/2)** |
 |:---:|:---:|
 | *Managing co-design at scale* | *Measuring success and learning* |
 | Project Planning | Impact Assessment |
