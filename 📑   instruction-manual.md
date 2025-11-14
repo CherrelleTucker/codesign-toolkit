@@ -1,4 +1,4 @@
-# 📋 Implementation Manual
+# 📋 CoDesign Toolkit Manual
 ## *Step-by-Step Instructions for Using This Toolkit*
 
 ---
