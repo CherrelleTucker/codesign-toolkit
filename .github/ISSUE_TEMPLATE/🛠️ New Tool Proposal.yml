@@ -1,0 +1,28 @@
+name: 🛠️ New Tool Proposal
+about: Suggest a new co-design tool for the toolkit
+title: '[NEW TOOL] Tool Name'
+labels: ['enhancement', 'new-tool']
+assignees: ''
+
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: Tool Category
+      options:
+        - Users & Stakeholders
+        - Technical Co-Development  
+        - Organizational & Process
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: Difficulty Level
+      options:
+        - 🌱 Beginner
+        - 📈 Intermediate
+        - 🎯 Advanced
+    validations:
+      required: true
