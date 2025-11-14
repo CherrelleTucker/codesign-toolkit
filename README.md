@@ -182,7 +182,11 @@ This toolkit synthesizes best practices from:
 - **MSFC** (Marshall Space Flight Center) Solution Co-Development Initiative
 - **GSFC** Earth Science Division Co-Design Programs
 
-*Full source documentation and citations available in each tool.*
+**🤖 Development Process:** Initial content synthesis and drafting assisted by ChatGSFC (NASA's secure ChatGPT), with human review, engineering, modification, and approval by NASA co-design practitioners.
+
+**📚 [View Complete Attribution & Source Documentation →](ATTRIBUTION.md)**
+
+*Full source documentation, AI assistance transparency, and citations available in each tool.*
 
 ---
 
