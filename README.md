@@ -48,19 +48,20 @@ graph LR
 
 ### Your 3-Step Journey
 
-1. **🔍 [Understand the Framework](🗺️%20framework-overview.md)** - *5 min read*
+1. **🔍 [Understand the Framework](https://github.com/CherrelleTucker/codesign-toolkit/blob/main/🗺️%20framework-overview.md)** - *5 min read*
    - What is co-design and why it matters
    - Core principles and mindset shifts
 
-2. **📋 [Explore Tool Categories](🛠️%20find-a-tool.md)** - *3 min read*
+2. **📋 [Explore Tool Categories](https://github.com/CherrelleTucker/codesign-toolkit/blob/main/🛠️%20find-a-tool.md)** - *3 min read*
    - Browse tools by project phase
    - Find what fits your current needs
 
-3. **🚀 [Try Your First Tool](📑%20instruction-manual.md)** - *10 min setup*
+3. **🚀 [Try Your First Tool](https://github.com/CherrelleTucker/codesign-toolkit/blob/main/📑%20instruction-manual.md)** - *10 min setup*
    - Step-by-step instructions
    - Tips for success
 
 </details>
+
 
 <details>
 <summary><strong>⚡ Experienced User? Jump Right In!</strong></summary>
