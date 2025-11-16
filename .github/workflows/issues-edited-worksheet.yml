@@ -18,32 +18,47 @@ jobs:
         with:
           persist-credentials: true
 
-      - name: Create markdown file using Python
+      - name: Build printable worksheet markdown
         run: |
-          python3 << 'PYTHON_EOF'
-          import json
-          import os
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
 
-          with open(os.environ['GITHUB_EVENT_PATH']) as f:
-              event = json.load(f)
+          const event = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
+          const issue = event.issue || {};
+          const repoFull = process.env.GITHUB_REPOSITORY || 'unknown/repo';
 
-          issue = event.get('issue', {})
-          repo = os.environ.get('GITHUB_REPOSITORY', 'unknown/repo')
+          const listText = (items, key) => {
+            if (!Array.isArray(items) || items.length === 0) return 'None';
+            const values = items
+              .map(item => (key ? item?.[key] : item))
+              .map(val => (typeof val === 'string' ? val.trim() : ''))
+              .filter(Boolean);
+            return values.length ? values.join(', ') : 'None';
+          };
 
-          labels = ', '.join([label['name'] for label in issue.get('labels', [])]) or 'None'
-          assignees = ', '.join([user['login'] for user in issue.get('assignees', [])]) or 'None'
-          body = issue.get('body', '').strip() or '(No issue body provided.)'
+          const labels = listText(issue.labels, 'name');
+          const assignees = listText(issue.assignees, 'login');
+          const body = (issue.body && issue.body.trim()) ? issue.body : '(No issue body provided.)';
+          const issueNumber = issue.number ?? 'unknown';
+          const issueUrl = issue.html_url || `https://github.com/${repoFull}/issues/${issueNumber}`;
+          const filePath = path.join('worksheets', `issue-${issueNumber}-worksheet.md`);
+          const content = `# Issue #${issueNumber}: ${issue.title || '(untitled issue)'}
 
-          os.makedirs('worksheets', exist_ok=True)
-
-          with open(f"worksheets/issue-{issue['number']}-worksheet.md", 'w') as f:
-              f.write(f"""# Issue #{issue['number']}: {issue['title']}
+**Repository:** \`${repoFull}\`  
+**Issue URL:** [${issueUrl}](${issueUrl})  
+**Author:** \`${issue.user?.login || 'unknown'}\`  
+**State:** \`${issue.state || 'unknown'}\`  
+**Labels:** ${labels}  
+**Assignees:** ${assignees}  
+**Created:** ${issue.created_at || 'unknown'}  
+**Last Updated:** ${issue.updated_at || 'unknown'}  
 
 ---
 
 ## Original Issue Description
 
-{body}
+${body}
 
 ---
 
@@ -53,11 +68,11 @@ jobs:
 
 ### 1. Summary / Problem Statement
 
--
+-  
 
 ### 2. Context & Background
 
--
+-  
 
 ### 3. Stakeholders / Owners
 
@@ -66,20 +81,20 @@ jobs:
 
 ### 4. Requirements / Acceptance Criteria
 
-- [ ]
-- [ ]
+- [ ]  
+- [ ]  
 
 ### 5. Constraints & Assumptions
 
--
+-  
 
 ### 6. Risks / Open Questions
 
--
+-  
 
 ### 7. Implementation Notes
 
--
+-  
 
 ### 8. Next Actions
 
@@ -89,19 +104,20 @@ jobs:
 
 ---
 
-*Generated automatically from GitHub Issue #{issue['number']} on {issue['updated_at']}.*
-""")
-          PYTHON_EOF
+*Generated automatically from GitHub Issue #${issueNumber} on ${issue.updated_at || 'unknown'}.*
+`;
 
-      - name: Install md-to-pdf
-        run: npm install -g md-to-pdf
+          fs.mkdirSync('worksheets', { recursive: true });
+          fs.writeFileSync(filePath, content, 'utf8');
+          console.log(`Created/Updated ${filePath}`);
+          NODE
 
       - name: Convert markdown to PDF
-        run: |
-          ISSUE_NUMBER="${{ github.event.issue.number }}"
-          cd worksheets
-          cat "issue-${ISSUE_NUMBER}-worksheet.md" | md-to-pdf > "issue-${ISSUE_NUMBER}-worksheet.pdf"
-          cd ..
+        uses: BaileyJM02/markdown-to-pdf@v1.2.0
+        with:
+          input_path: worksheets/issue-${{ github.event.issue.number }}-worksheet.md
+          output_dir: worksheets
+          build_html: false
 
       - name: Commit PDF only
         run: |
@@ -122,7 +138,7 @@ jobs:
           path: worksheets/issue-${{ github.event.issue.number }}-worksheet.pdf
           retention-days: 90
 
-      - name: Comment on issue with PDF location
+      - name: Comment on issue with worksheet location
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -133,9 +149,16 @@ jobs:
             const runId = context.runId;
             const artifactUrl = `https://github.com/${owner}/${repo}/actions/runs/${runId}`;
 
+            const commentBody = [
+              ':white_check_mark: Issue card PDF generated!',
+              '',
+              `- **PDF:** [\`${pdfPath}\`](https://github.com/${owner}/${repo}/blob/main/${pdfPath})`,
+              `- **Download:** [Artifact from workflow run](${artifactUrl})`
+            ].join('\n');
+
             await github.rest.issues.createComment({
               owner,
               repo,
               issue_number: issueNumber,
-              body: `📄 Issue card PDF generated!\n\n- **PDF:** [\`${pdfPath}\`](https://github.com/${owner}/${repo}/blob/main/${pdfPath})\n- **Download:** [Artifact from workflow run](${artifactUrl})`
+              body: commentBody
             });
