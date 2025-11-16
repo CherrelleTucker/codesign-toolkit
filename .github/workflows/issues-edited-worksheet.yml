@@ -31,40 +31,34 @@ jobs:
           persist-credentials: true
 
       - name: Build printable worksheet markdown
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          ISSUE_STATE: ${{ github.event.issue.state }}
+          ISSUE_CREATED_AT: ${{ github.event.issue.created_at }}
+          ISSUE_UPDATED_AT: ${{ github.event.issue.updated_at }}
+          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
+          REPO_FULL: ${{ github.repository }}
         run: |
-          # Basic fields from event payload
-          ISSUE_NUMBER="$(jq -r '.issue.number'        "$GITHUB_EVENT_PATH")"
-          ISSUE_TITLE="$(jq -r '.issue.title'         "$GITHUB_EVENT_PATH")"
-          ISSUE_BODY="$(jq -r '.issue.body // ""'     "$GITHUB_EVENT_PATH")"
-          ISSUE_URL="$(jq -r '.issue.html_url'        "$GITHUB_EVENT_PATH")"
-          ISSUE_STATE="$(jq -r '.issue.state'         "$GITHUB_EVENT_PATH")"
-          ISSUE_CREATED_AT="$(jq -r '.issue.created_at' "$GITHUB_EVENT_PATH")"
-          ISSUE_UPDATED_AT="$(jq -r '.issue.updated_at' "$GITHUB_EVENT_PATH")"
-          ISSUE_AUTHOR="$(jq -r '.issue.user.login'   "$GITHUB_EVENT_PATH")"
-
-          # Labels (comma-separated)
-          ISSUE_LABELS="$(jq -r '
-            if .issue.labels and (.issue.labels | length > 0)
-            then [.issue.labels[].name] | join(", ")
-            else "None"
-            end
-          ' "$GITHUB_EVENT_PATH")"
-
-          # Assignees (comma-separated)
-          ISSUE_ASSIGNEES="$(jq -r '
-            if .issue.assignees and (.issue.assignees | length > 0)
-            then [.issue.assignees[].login] | join(", ")
-            else "None"
-            end
-          ' "$GITHUB_EVENT_PATH")"
-
-          REPO_FULL="$GITHUB_REPOSITORY"
-
           mkdir -p worksheets
           FILE="worksheets/issue-${ISSUE_NUMBER}-worksheet.md"
 
+          # Get labels as comma-separated string
+          ISSUE_LABELS="${{ join(github.event.issue.labels.*.name, ', ') }}"
+          if [ -z "$ISSUE_LABELS" ]; then
+            ISSUE_LABELS="None"
+          fi
+
+          # Get assignees as comma-separated string
+          ISSUE_ASSIGNEES="${{ join(github.event.issue.assignees.*.login, ', ') }}"
+          if [ -z "$ISSUE_ASSIGNEES" ]; then
+            ISSUE_ASSIGNEES="None"
+          fi
+
           # If body is empty, give a friendly placeholder
-          if [ -z "$ISSUE_BODY" ] || [ "$ISSUE_BODY" = "null" ]; then
+          if [ -z "$ISSUE_BODY" ]; then
             ISSUE_BODY_TEXT="(No issue body provided.)"
           else
             ISSUE_BODY_TEXT="$ISSUE_BODY"
