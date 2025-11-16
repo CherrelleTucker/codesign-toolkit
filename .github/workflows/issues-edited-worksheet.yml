@@ -2,7 +2,7 @@ name: Issue Edited Worksheet
 
 on:
   issues:
-    types: [edited]
+    types: [edited]   # ✅ ONLY run when an issue is edited
 
 permissions:
   contents: write
@@ -19,48 +19,57 @@ jobs:
           echo "Action: ${{ github.event.action }}"
           echo "Issue:  #${{ github.event.issue.number }} – ${{ github.event.issue.title }}"
           echo "State:  ${{ github.event.issue.state }}"
-          echo "Raw event payload:"
-          cat "$GITHUB_EVENT_PATH"
 
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
           persist-credentials: true
 
+      # Use github-script to gather all the metadata and export as env vars
+      - name: Prepare issue metadata
+        id: meta
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            const repoFull = `${context.repo.owner}/${context.repo.repo}`;
+
+            const labels = (issue.labels || []).map(l => l.name).join(', ') || 'None';
+            const assignees = (issue.assignees || []).map(a => a.login).join(', ') || 'None';
+
+            core.exportVariable('ISSUE_NUMBER', issue.number.toString());
+            core.exportVariable('ISSUE_TITLE', issue.title || '');
+            core.exportVariable('ISSUE_BODY', issue.body || '');
+            core.exportVariable('ISSUE_URL', issue.html_url || '');
+            core.exportVariable('ISSUE_STATE', issue.state || '');
+            core.exportVariable('ISSUE_CREATED_AT', issue.created_at || '');
+            core.exportVariable('ISSUE_UPDATED_AT', issue.updated_at || '');
+            core.exportVariable('ISSUE_AUTHOR', issue.user?.login || '');
+            core.exportVariable('ISSUE_LABELS', labels);
+            core.exportVariable('ISSUE_ASSIGNEES', assignees);
+            core.exportVariable('REPO_FULL', repoFull);
+
+            core.info(`Prepared metadata for issue #${issue.number}`);
+
       - name: Build printable worksheet markdown
         run: |
-          # Basic fields from event payload
-          ISSUE_NUMBER="$(jq -r '.issue.number'        "$GITHUB_EVENT_PATH")"
-          ISSUE_TITLE="$(jq -r '.issue.title'         "$GITHUB_EVENT_PATH")"
-          ISSUE_BODY="$(jq -r '.issue.body // ""'     "$GITHUB_EVENT_PATH")"
-          ISSUE_URL="$(jq -r '.issue.html_url'        "$GITHUB_EVENT_PATH")"
-          ISSUE_STATE="$(jq -r '.issue.state'         "$GITHUB_EVENT_PATH")"
-          ISSUE_CREATED_AT="$(jq -r '.issue.created_at' "$GITHUB_EVENT_PATH")"
-          ISSUE_UPDATED_AT="$(jq -r '.issue.updated_at' "$GITHUB_EVENT_PATH")"
-          ISSUE_AUTHOR="$(jq -r '.issue.user.login'   "$GITHUB_EVENT_PATH")"
-
-          # Labels (comma-separated)
-          ISSUE_LABELS="$(jq -r '
-            if .issue.labels and (.issue.labels | length > 0)
-            then [.issue.labels[].name] | join(", ")
-            else "None"
-            end
-          ' "$GITHUB_EVENT_PATH")"
-
-          # Assignees (comma-separated)
-          ISSUE_ASSIGNEES="$(jq -r '
-            if .issue.assignees and (.issue.assignees | length > 0)
-            then [.issue.assignees[].login] | join(", ")
-            else "None"
-            end
-          ' "$GITHUB_EVENT_PATH")"
-
-          REPO_FULL="$GITHUB_REPOSITORY"
-
           mkdir -p worksheets
+
+          ISSUE_NUMBER="${ISSUE_NUMBER}"
+          ISSUE_TITLE="${ISSUE_TITLE}"
+          ISSUE_BODY="${ISSUE_BODY}"
+          ISSUE_URL="${ISSUE_URL}"
+          ISSUE_STATE="${ISSUE_STATE}"
+          ISSUE_CREATED_AT="${ISSUE_CREATED_AT}"
+          ISSUE_UPDATED_AT="${ISSUE_UPDATED_AT}"
+          ISSUE_AUTHOR="${ISSUE_AUTHOR}"
+          ISSUE_LABELS="${ISSUE_LABELS}"
+          ISSUE_ASSIGNEES="${ISSUE_ASSIGNEES}"
+          REPO_FULL="${REPO_FULL}"
+
           FILE="worksheets/issue-${ISSUE_NUMBER}-worksheet.md"
 
-          # If body is empty, give a friendly placeholder
           if [ -z "$ISSUE_BODY" ] || [ "$ISSUE_BODY" = "null" ]; then
             ISSUE_BODY_TEXT="(No issue body provided.)"
           else
@@ -137,7 +146,6 @@ EOF
 
       - name: Commit worksheet
         run: |
-          ISSUE_NUMBER="${{ github.event.issue.number }}"
           FILE="worksheets/issue-${ISSUE_NUMBER}-worksheet.md"
 
           git config user.name "github-actions[bot]"
@@ -146,6 +154,8 @@ EOF
           git add "$FILE"
           git commit -m "Update worksheet for edited issue #${ISSUE_NUMBER}" || echo "No changes to commit"
           git push || echo "No changes pushed"
+        env:
+          ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
 
       - name: Comment on issue with worksheet location
         uses: actions/github-script@v6
