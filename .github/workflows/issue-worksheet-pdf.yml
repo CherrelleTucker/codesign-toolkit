@@ -20,15 +20,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Pull the repo so we can store PDFs into it
+      # 1. Check out repo so we can write into /worksheets and commit
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          ref: main   # change if your default branch is not main
+          ref: main  # change if your default branch is not main
 
-      # 2. Build a TEMPORARY markdown file from the issue data
-      #    (this file is NOT in the repo and will NOT be committed)
-      - name: Build temporary worksheet markdown
+      # 2. Build/overwrite worksheets/issue-<n>.md from issue + expand <details>
+      - name: Build worksheet markdown from issue
         id: build_md
         uses: actions/github-script@v7
         with:
@@ -37,164 +36,162 @@ jobs:
             const fs = require("fs");
             const path = require("path");
 
-            // Expand <details><summary>...</summary> ... </details>
-            // into plain, always-visible markdown
-            function expandDetails(html) {
-              if (!html) return "";
-              return html.replace(/<details>([\s\S]*?)<\/details>/gi, (match, inner) => {
-                const summaryMatch = inner.match(/<summary>([\s\S]*?)<\/summary>/i);
-                let summary = "";
-                let rest = inner;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            let issue;
 
-                if (summaryMatch) {
-                  // Clean summary of any HTML tags
-                  summary = summaryMatch[1]
-                    .replace(/<\/?[^>]+>/g, "")
-                    .trim();
-                  // Everything after </summary> is the "body" content
-                  rest = inner.slice(summaryMatch.index + summaryMatch[0].length);
-                }
-
-                // Strip the first <br> after summary if present
-                rest = rest.replace(/^\s*<br\s*\/?>\s*/i, "");
-
-                // Return expanded block as markdown
-                return `\n\n**${summary || "Details"}**\n\n${rest.trim()}\n\n`;
-              });
-            }
-
-            try {
-              const owner = context.repo.owner;
-              const repo = context.repo.repo;
-
-              let issue;
-
-              // Determine how the workflow was triggered
-              if (context.payload.issue) {
-                core.info("Using issue from event payload");
-                issue = context.payload.issue;
-              } else {
-                const issueNumber = Number(context.payload.inputs["issue-number"]);
-                if (!issueNumber) {
-                  core.setFailed("No issue-number provided.");
-                  return;
-                }
-                core.info(`Fetching issue #${issueNumber} via REST API`);
-                const { data } = await github.rest.issues.get({
-                  owner,
-                  repo,
-                  issue_number: issueNumber
-                });
-                issue = data;
+            // Figure out which issue we're working on
+            if (context.payload.issue) {
+              core.info("Using issue from event payload");
+              issue = context.payload.issue;
+            } else {
+              const issueNumber = Number(context.payload.inputs["issue-number"]);
+              if (!issueNumber) {
+                core.setFailed("No issue-number provided.");
+                return;
               }
-
-              const n = issue.number;
-              core.info(`Building worksheet markdown for issue #${n}`);
-
-              // TEMP folder RELATIVE to /github/workspace
-              const tmpDir = path.join("tmp_worksheets");
-              fs.mkdirSync(tmpDir, { recursive: true });
-
-              const mdFilename = `issue-${n}.md`;
-              const mdPath = path.join(tmpDir, mdFilename);
-
-              // Metadata
-              const labels = (issue.labels || [])
-                .map(l => (typeof l === "string" ? l : l.name))
-                .join(", ") || "None";
-
-              const assignees = (issue.assignees || [])
-                .map(a => a.login)
-                .join(", ") || "None";
-
-              const rawBody = issue.body || "_No description provided._";
-              const bodyText = expandDetails(rawBody);
-              const updated = issue.updated_at || issue.created_at;
-
-              // Markdown content for worksheet
-              const mdLines = [
-                `# Issue #${n}: ${issue.title}`,
-                "",
-                `**Repository:** \`${owner}/${repo}\``,
-                `**URL:** ${issue.html_url}`,
-                `**Author:** @${issue.user?.login || "unknown"}`,
-                `**State:** \`${issue.state}\``,
-                `**Labels:** ${labels}`,
-                `**Assignees:** ${assignees}`,
-                `**Created:** ${issue.created_at}`,
-                `**Updated:** ${issue.updated_at}`,
-                "",
-                `**Worksheet version:** ${updated}`,
-                "",
-                "---",
-                "",
-                bodyText,
-                ""
-              ];
-
-              const md = mdLines.join("\n");
-
-              // Write TEMP file (not tracked by git)
-              fs.writeFileSync(mdPath, md, "utf8");
-              core.info(`Wrote temporary markdown to: ${mdPath}`);
-
-              // Final PDF will live in repo at: worksheets/issue-<n>.pdf
-              const pdfPath = path.join("worksheets", `issue-${n}.pdf`);
-
-              core.setOutput("issue-number", String(n));
-              core.setOutput("md-path", mdPath);   // relative path
-              core.setOutput("pdf-path", pdfPath);
-            } catch (err) {
-              core.error(`Error while building markdown: ${err}`);
-              core.setFailed(err.message || String(err));
+              core.info(`Fetching issue #${issueNumber} via REST API`);
+              const { data } = await github.rest.issues.get({
+                owner,
+                repo,
+                issue_number: issueNumber,
+              });
+              issue = data;
             }
 
-      # 3. Convert the temporary Markdown → PDF into the worksheets folder
-      #    using the Marketplace Action: BaileyJM02/markdown-to-pdf
+            const n = issue.number;
+            core.info(`Building worksheet markdown for issue #${n}`);
+
+            // Helper to expand <details> blocks into plain markdown sections
+            function expandDetails(body) {
+              if (!body) return "";
+
+              let output = body;
+
+              // Match <details ...> ... </details> with any inner content
+              const detailsRegex = /<details[^>]*>([\s\S]*?)<\/details>/gi;
+
+              output = output.replace(detailsRegex, (fullMatch, inner) => {
+                // Grab the <summary> ... </summary> part
+                const summaryRegex = /<summary[^>]*>([\s\S]*?)<\/summary>/i;
+                const summaryMatch = inner.match(summaryRegex);
+
+                if (!summaryMatch) {
+                  // No summary? Just return inner content as-is.
+                  return inner;
+                }
+
+                const summaryHtml = summaryMatch[1] || "";
+                // Strip HTML tags from summary text (keep emoji/text)
+                const summaryText = summaryHtml.replace(/<\/?[^>]+>/g, "").trim() || "Section";
+
+                // The rest of the content (after summary)
+                const rest = inner.replace(summaryRegex, "").trim();
+
+                // Turn into a visible markdown section
+                let result = `\n\n---\n\n### ${summaryText}\n\n`;
+                if (rest) {
+                  result += rest + "\n\n";
+                }
+                return result;
+              });
+
+              return output;
+            }
+
+            const expandedBody = expandDetails(issue.body || "_No description provided._");
+
+            const labels = (issue.labels || [])
+              .map(l => (typeof l === "string" ? l : l.name))
+              .join(", ") || "None";
+
+            const assignees = (issue.assignees || [])
+              .map(a => a.login)
+              .join(", ") || "None";
+
+            const created = issue.created_at || "";
+            const updated = issue.updated_at || "";
+            const now = new Date().toISOString();
+
+            // Ensure worksheets directory exists
+            const worksheetsDir = path.join(process.env.GITHUB_WORKSPACE, "worksheets");
+            fs.mkdirSync(worksheetsDir, { recursive: true });
+
+            const mdFilename = `issue-${n}.md`;
+            const mdPath = path.join(worksheetsDir, mdFilename);
+
+            const mdLines = [
+              `# Issue #${n}: ${issue.title}`,
+              "",
+              `**Repository:** \`${owner}/${repo}\``,
+              `**URL:** ${issue.html_url}`,
+              `**Author:** @${issue.user?.login || "unknown"}`,
+              "",
+              `**State:** \`${issue.state}\``,
+              `**Labels:** ${labels}`,
+              `**Assignees:** ${assignees}`,
+              "",
+              `**Created:** ${created}`,
+              `**Last Updated in GitHub:** ${updated}`,
+              `**Worksheet Version:** ${now}`,
+              "",
+              "---",
+              "",
+              expandedBody,
+              ""
+            ];
+
+            fs.writeFileSync(mdPath, mdLines.join("\n"), "utf8");
+            core.info(`Wrote worksheet markdown to: ${mdPath}`);
+
+            // Outputs are RELATIVE to repo root for later steps
+            core.setOutput("issue-number", String(n));
+            core.setOutput("md-rel-path", `worksheets/${mdFilename}`);
+            core.setOutput("pdf-rel-path", `worksheets/issue-${n}.pdf`);
+
+      # 3. Convert that single markdown file → PDF in /worksheets using marketplace action
       - name: Convert worksheet markdown to PDF
-        uses: BaileyJM02/markdown-to-pdf@v1
+        uses: baileyjm02/markdown-to-pdf@v1
         with:
-          # Convert all .md files in tmp_worksheets
-          input_dir: tmp_worksheets
-          # PDF output folder INSIDE the repo
+          # This can be a single file path (relative to repo root)
+          input_path: ${{ steps.build_md.outputs.md-rel-path }}
+          # PDFs go here
           output_dir: worksheets
+          build_html: false
+          build_pdf: true
 
-      # 4. Commit ONLY the PDFs back to main
-      - name: Commit worksheet PDF
+      # 4. Commit the .md and .pdf back to main
+      - name: Commit worksheet md & PDF
         run: |
-          mkdir -p worksheets
-
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Add only PDFs (no markdown)
-          git add worksheets/*.pdf 2>/dev/null || echo "No PDFs to add"
+          git add "worksheets/issue-${{ steps.build_md.outputs.issue-number }}.md" "worksheets/issue-${{ steps.build_md.outputs.issue-number }}.pdf" 2>/dev/null || echo "Nothing to add"
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "Update worksheet PDF for issue #${{ steps.build_md.outputs.issue-number }}"
+            git commit -m "Update worksheet for issue #${{ steps.build_md.outputs.issue-number }}"
             git push
           fi
 
-      # 5. Comment on the issue with a PDF link
+      # 5. Comment the PDF link on the issue
       - name: Comment PDF link on issue
         uses: actions/github-script@v7
         env:
           ISSUE_NUMBER: ${{ steps.build_md.outputs.issue-number }}
-          PDF_PATH: ${{ steps.build_md.outputs.pdf-path }}
+          PDF_REL: ${{ steps.build_md.outputs.pdf-rel-path }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const issueNumber = Number(process.env.ISSUE_NUMBER);
-            const pdfPathRaw = process.env.PDF_PATH;
+            const pdfRel = process.env.PDF_REL;
 
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-            const branch = "main";  // change if your default branch is not main
+            const branch = "main";  // change if your default branch is different
 
-            const pdfPath = pdfPathRaw.replace(/^\.?\/?/, "");
-            const url = `https://github.com/${owner}/${repo}/blob/${branch}/${pdfPath}?raw=1`;
+            const url = `https://github.com/${owner}/${repo}/raw/${branch}/${pdfRel}`;
 
             const bodyLines = [
               "📄 **Your worksheet PDF is ready!**",
