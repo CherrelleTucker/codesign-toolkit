@@ -50,18 +50,18 @@ jobs:
           FILE="worksheets/issue-${ISSUE_NUMBER}.md"
           echo "Creating file: $FILE"
           mkdir -p worksheets
-          cat > "$FILE" <<EOF
-# Issue $ISSUE_NUMBER: $ISSUE_TITLE
-
-**Issue URL:** [$ISSUE_URL]($ISSUE_URL)
-
-**Issue Title:** $ISSUE_TITLE  
-**Issue Number:** $ISSUE_NUMBER
-
-## Issue Body
-
-$ISSUE_BODY
-EOF
+          {
+            echo "# Issue $ISSUE_NUMBER: $ISSUE_TITLE"
+            echo ""
+            echo "**Issue URL:** [$ISSUE_URL]($ISSUE_URL)"
+            echo ""
+            echo "**Issue Title:** $ISSUE_TITLE  "
+            echo "**Issue Number:** $ISSUE_NUMBER"
+            echo ""
+            echo "## Issue Body"
+            echo ""
+            echo "$ISSUE_BODY"
+          } > "$FILE"
           echo "Created worksheet file:"
           cat "$FILE"
 
