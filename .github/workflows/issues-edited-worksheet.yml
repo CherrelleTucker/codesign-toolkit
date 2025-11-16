@@ -18,46 +18,41 @@ jobs:
         with:
           persist-credentials: true
 
-      - name: Build printable worksheet markdown
+      - name: Create markdown file using Python
         run: |
-          node <<'NODE'
-          const fs = require('fs');
-          const path = require('path');
+          python3 << 'PYTHON_EOF'
+          import json
+          import os
 
-          const event = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
-          const issue = event.issue || {};
-          const repoFull = process.env.GITHUB_REPOSITORY || 'unknown/repo';
+          with open(os.environ['GITHUB_EVENT_PATH']) as f:
+              event = json.load(f)
 
-          const listText = (items, key) => {
-            if (!Array.isArray(items) || items.length === 0) return 'None';
-            const values = items
-              .map(item => (key ? item?.[key] : item))
-              .map(val => (typeof val === 'string' ? val.trim() : ''))
-              .filter(Boolean);
-            return values.length ? values.join(', ') : 'None';
-          };
+          issue = event.get('issue', {})
+          repo = os.environ.get('GITHUB_REPOSITORY', 'unknown/repo')
 
-          const labels = listText(issue.labels, 'name');
-          const assignees = listText(issue.assignees, 'login');
-          const body = (issue.body && issue.body.trim()) ? issue.body : '(No issue body provided.)';
+          labels = ', '.join([label['name'] for label in issue.get('labels', [])]) or 'None'
+          assignees = ', '.join([user['login'] for user in issue.get('assignees', [])]) or 'None'
+          body = issue.get('body', '').strip() or '(No issue body provided.)'
 
-          const filePath = path.join('worksheets', `issue-${issue.number}-worksheet.md`);
-          const content = `# Issue #${issue.number}: ${issue.title}
+          os.makedirs('worksheets', exist_ok=True)
 
-**Repository:** \`${repoFull}\`
-**Issue URL:** [${issue.html_url}](${issue.html_url})
-**Author:** \`${issue.user?.login || 'unknown'}\`
-**State:** \`${issue.state}\`
-**Labels:** ${labels}
-**Assignees:** ${assignees}
-**Created:** ${issue.created_at}
-**Last Updated:** ${issue.updated_at}
+          with open(f"worksheets/issue-{issue['number']}-worksheet.md", 'w') as f:
+              f.write(f"""# Issue #{issue['number']}: {issue['title']}
+
+**Repository:** `{repo}`
+**Issue URL:** [{issue['html_url']}]({issue['html_url']})
+**Author:** `{issue['user']['login']}`
+**State:** `{issue['state']}`
+**Labels:** {labels}
+**Assignees:** {assignees}
+**Created:** {issue['created_at']}
+**Last Updated:** {issue['updated_at']}
 
 ---
 
 ## Original Issue Description
 
-${body}
+{body}
 
 ---
 
@@ -103,20 +98,19 @@ ${body}
 
 ---
 
-*Generated automatically from GitHub Issue #${issue.number} on ${issue.updated_at}.*
-`;
+*Generated automatically from GitHub Issue #{issue['number']} on {issue['updated_at']}.*
+""")
+          PYTHON_EOF
 
-          fs.mkdirSync('worksheets', { recursive: true });
-          fs.writeFileSync(filePath, content, 'utf8');
-          console.log(`Created/Updated ${filePath}`);
-          NODE
+      - name: Install md-to-pdf
+        run: npm install -g md-to-pdf
 
       - name: Convert markdown to PDF
-        uses: BaileyJM02/markdown-to-pdf@v1.2.0
-        with:
-          input_path: worksheets/issue-${{ github.event.issue.number }}-worksheet.md
-          output_dir: worksheets
-          build_html: false
+        run: |
+          ISSUE_NUMBER="${{ github.event.issue.number }}"
+          cd worksheets
+          cat "issue-${ISSUE_NUMBER}-worksheet.md" | md-to-pdf > "issue-${ISSUE_NUMBER}-worksheet.pdf"
+          cd ..
 
       - name: Commit PDF only
         run: |
@@ -154,6 +148,3 @@ ${body}
               issue_number: issueNumber,
               body: `📄 Issue card PDF generated!\n\n- **PDF:** [\`${pdfPath}\`](https://github.com/${owner}/${repo}/blob/main/${pdfPath})\n- **Download:** [Artifact from workflow run](${artifactUrl})`
             });
-
-
-
