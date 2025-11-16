@@ -60,8 +60,9 @@ jobs:
 
             const n = issue.number;
 
-            // TEMP folder inside the Actions workspace (not part of repo)
-            const tmpDir = path.join(process.cwd(), "tmp_worksheets");
+            // TEMP folder RELATIVE to /github/workspace
+            // (important: NOT an absolute path)
+            const tmpDir = path.join("tmp_worksheets");
             fs.mkdirSync(tmpDir, { recursive: true });
 
             const mdFilename = `issue-${n}.md`;
@@ -104,14 +105,14 @@ jobs:
             const pdfPath = path.join("worksheets", `issue-${n}.pdf`);
 
             core.setOutput("issue-number", String(n));
-            core.setOutput("md-path", mdPath);
+            core.setOutput("md-path", mdPath);   // <-- relative path
             core.setOutput("pdf-path", pdfPath);
 
       # 3. Convert the temporary Markdown → PDF into the worksheets folder
       - name: Convert issue markdown to PDF
         uses: baileyjm02/markdown-to-pdf@v1
         with:
-          # TEMP file created above
+          # TEMP file created above (relative to /github/workspace)
           input_path: ${{ steps.build_md.outputs.md-path }}
           # PDF output folder INSIDE the repo
           output_dir: worksheets
