@@ -5,22 +5,34 @@ on:
     types: [opened, edited, reopened]
 
 permissions:
-  contents: write      # to commit the worksheet file
-  issues: write        # to comment + label
+  contents: write      # commit the worksheet file
+  issues: write        # add label + comment
 
 jobs:
   build-worksheet:
     runs-on: ubuntu-latest
 
-    env:
-      ISSUE_NUMBER: ${{ github.event.issue.number }}
-      ISSUE_TITLE: ${{ github.event.issue.title }}
-      ISSUE_URL: ${{ github.event.issue.html_url }}
-      ISSUE_LABELS: ${{ join(github.event.issue.labels.*.name, ', ') }}
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+      - name: Extract issue metadata from event
+        run: |
+          echo "Extracting issue metadata from $GITHUB_EVENT_PATH"
+          ISSUE_NUMBER=$(jq -r '.issue.number' "$GITHUB_EVENT_PATH")
+          ISSUE_TITLE=$(jq -r '.issue.title' "$GITHUB_EVENT_PATH")
+          ISSUE_URL=$(jq -r '.issue.html_url' "$GITHUB_EVENT_PATH")
+          ISSUE_LABELS=$(jq -r '[.issue.labels[].name] | join(", ")' "$GITHUB_EVENT_PATH")
+          ISSUE_BODY=$(jq -r '.issue.body // ""' "$GITHUB_EVENT_PATH")
+
+          # Save into environment for later steps
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> "$GITHUB_ENV"
+          echo "ISSUE_TITLE=$ISSUE_TITLE" >> "$GITHUB_ENV"
+          echo "ISSUE_URL=$ISSUE_URL" >> "$GITHUB_ENV"
+          echo "ISSUE_LABELS=$ISSUE_LABELS" >> "$GITHUB_ENV"
+
+          # Save body to a file (can be multi-line)
+          printf "%s\n" "$ISSUE_BODY" > issue_body.txt
 
       - name: Ensure worksheets folder exists
         run: mkdir -p worksheets
@@ -29,6 +41,9 @@ jobs:
         run: |
           ISSUE_FILE="worksheets/issue-${ISSUE_NUMBER}.md"
 
+          echo "Writing worksheet to $ISSUE_FILE"
+
+          # Start fresh
           cat > "$ISSUE_FILE" <<EOF
 # 📝 Issue Worksheet for #${ISSUE_NUMBER}
 
@@ -49,11 +64,18 @@ jobs:
 
 ## 2. Original Description (reference)
 
-\`\`\`text
-${{ github.event.issue.body || '' }}
-\`\`\`
+(Autofilled from the issue body. Use sections below for your working notes.)
 
----
+-------------------- ORIGINAL ISSUE BODY --------------------
+
+EOF
+
+          # Append the raw issue body
+          cat issue_body.txt >> "$ISSUE_FILE"
+
+          cat >> "$ISSUE_FILE" <<'EOF'
+
+-------------------- END ORIGINAL ISSUE BODY --------------------
 
 ## 3. Problem / Need Statement
 
@@ -125,23 +147,23 @@ EOF
             echo "No changes to commit."
           fi
 
-      - name: Add 'worksheet-generated' label (optional)
+      - name: Add 'worksheet-generated' label
         uses: actions-ecosystem/action-add-labels@v1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           labels: worksheet-generated
 
-      - name: Comment with worksheet link (or update existing comment)
+      - name: Comment with worksheet link
         uses: peter-evans/create-or-update-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ env.ISSUE_NUMBER }}
+          issue-number: ${{ github.event.issue.number }}
           comment-identifier: worksheet-link
           body: |
             📄 **Your worksheet has been generated for this issue.**
 
             You can view or print it here:
 
-            https://github.com/${{ github.repository }}/blob/main/worksheets/issue-${{ env.ISSUE_NUMBER }}.md
+            https://github.com/${{ github.repository }}/blob/main/worksheets/issue-${{ github.event.issue.number }}.md
 
             This file will auto-update whenever the issue is edited or reopened.
