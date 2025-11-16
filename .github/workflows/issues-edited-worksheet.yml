@@ -1,4 +1,4 @@
-name: Issue Edited Worksheet
+name: Issue Worksheet PDF
 
 on:
   issues:
@@ -10,15 +10,16 @@ permissions:
 
 jobs:
   build-worksheet:
+    name: Build worksheet
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           persist-credentials: true
 
-      - name: Build printable worksheet markdown
+      - name: Generate worksheet markdown
         run: |
           node <<'NODE'
           const fs = require('fs');
@@ -39,20 +40,21 @@ jobs:
 
           const labels = listText(issue.labels, 'name');
           const assignees = listText(issue.assignees, 'login');
-          const body = (issue.body && issue.body.trim()) ? issue.body : '(No issue body provided.)';
+          const body = issue.body?.trim?.() ? issue.body : '(No issue body provided.)';
           const issueNumber = issue.number ?? 'unknown';
           const issueUrl = issue.html_url || `https://github.com/${repoFull}/issues/${issueNumber}`;
           const filePath = path.join('worksheets', `issue-${issueNumber}-worksheet.md`);
+
           const content = `# Issue #${issueNumber}: ${issue.title || '(untitled issue)'}
 
-**Repository:** \`${repoFull}\`  
-**Issue URL:** [${issueUrl}](${issueUrl})  
-**Author:** \`${issue.user?.login || 'unknown'}\`  
-**State:** \`${issue.state || 'unknown'}\`  
-**Labels:** ${labels}  
-**Assignees:** ${assignees}  
-**Created:** ${issue.created_at || 'unknown'}  
-**Last Updated:** ${issue.updated_at || 'unknown'}  
+**Repository:** \`${repoFull}\`
+**Issue URL:** [${issueUrl}](${issueUrl})
+**Author:** \`${issue.user?.login || 'unknown'}\`
+**State:** \`${issue.state || 'unknown'}\`
+**Labels:** ${labels}
+**Assignees:** ${assignees}
+**Created:** ${issue.created_at || 'unknown'}
+**Last Updated:** ${issue.updated_at || 'unknown'}
 
 ---
 
@@ -68,11 +70,11 @@ ${body}
 
 ### 1. Summary / Problem Statement
 
--  
+-
 
 ### 2. Context & Background
 
--  
+-
 
 ### 3. Stakeholders / Owners
 
@@ -81,20 +83,20 @@ ${body}
 
 ### 4. Requirements / Acceptance Criteria
 
-- [ ]  
-- [ ]  
+- [ ]
+- [ ]
 
 ### 5. Constraints & Assumptions
 
--  
+-
 
 ### 6. Risks / Open Questions
 
--  
+-
 
 ### 7. Implementation Notes
 
--  
+-
 
 ### 8. Next Actions
 
@@ -119,7 +121,7 @@ ${body}
           output_dir: worksheets
           build_html: false
 
-      - name: Commit PDF only
+      - name: Commit generated PDF
         run: |
           ISSUE_NUMBER="${{ github.event.issue.number }}"
           PDF_FILE="worksheets/issue-${ISSUE_NUMBER}-worksheet.pdf"
@@ -131,15 +133,15 @@ ${body}
           git commit -m "Update PDF worksheet for issue #${ISSUE_NUMBER}" || echo "No changes to commit"
           git push || echo "No changes pushed"
 
-      - name: Upload PDF as artifact
+      - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
         with:
           name: issue-${{ github.event.issue.number }}-worksheet-pdf
           path: worksheets/issue-${{ github.event.issue.number }}-worksheet.pdf
           retention-days: 90
 
-      - name: Comment on issue with worksheet location
-        uses: actions/github-script@v6
+      - name: Comment with worksheet link
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -150,7 +152,7 @@ ${body}
             const artifactUrl = `https://github.com/${owner}/${repo}/actions/runs/${runId}`;
 
             const commentBody = [
-              ':white_check_mark: Issue card PDF generated!',
+              ':white_check_mark: Issue worksheet PDF generated!',
               '',
               `- **PDF:** [\`${pdfPath}\`](https://github.com/${owner}/${repo}/blob/main/${pdfPath})`,
               `- **Download:** [Artifact from workflow run](${artifactUrl})`
