@@ -72,27 +72,42 @@ jobs:
               function expandDetails(md) {
                 if (!md) return md;
 
-                // 1) Convert <summary>...</summary> into a bold heading line
-                //    and strip inner HTML tags for cleaner text
+                // Log before changes
+                core.info("Original body (first 500 chars):");
+                core.info(md.slice(0, 500));
+
+                // 1) Handle well-formed <details><summary>...</summary>...</details> blocks
+                md = md.replace(
+                  /<details[^>]*>\s*<summary>([\s\S]*?)<\/summary>([\s\S]*?)<\/details>/gi,
+                  (_match, summaryInner, contentInner) => {
+                    const summaryPlain = summaryInner.replace(/<\/?[^>]+>/g, "");
+                    const content = contentInner.trim();
+                    return `\n\n**${summaryPlain.trim()}**\n\n${content}\n\n`;
+                  }
+                );
+
+                // 2) Fallback for stray <summary>...</summary> tags
                 md = md.replace(/<summary>([\s\S]*?)<\/summary>/gi, (_match, inner) => {
-                  const plain = inner.replace(/<\/?[^>]+>/g, ""); // remove HTML tags
+                  const plain = inner.replace(/<\/?[^>]+>/g, "");
                   return `\n\n**${plain.trim()}**\n\n`;
                 });
 
-                // 2) Remove any <details ...> opening tag
+                // 3) Remove any remaining <details> tags
                 md = md.replace(/<details[^>]*>/gi, "");
-
-                // 3) Remove closing </details>
                 md = md.replace(/<\/details>/gi, "");
+
+                // Log after changes
+                core.info("Expanded body (first 500 chars):");
+                core.info(md.slice(0, 500));
 
                 return md;
               }
 
               // Original issue body (markdown + HTML)
-              let bodyText = issue.body || "_No description provided._";
+              const originalBody = issue.body || "_No description provided._";
 
               // Expand any <details>/<summary> sections so PDF shows everything
-              bodyText = expandDetails(bodyText);
+              const bodyText = expandDetails(originalBody);
 
               // TEMP folder RELATIVE to /github/workspace
               const tmpDir = path.join("tmp_worksheets");
