@@ -70,70 +70,70 @@ jobs:
             ISSUE_BODY_TEXT="$ISSUE_BODY"
           fi
 
-          cat <<'EOF' | sed 's/^[[:space:]]\{10\}//' > "$FILE"
-          # Issue #${ISSUE_NUMBER}: ${ISSUE_TITLE}
+          cat <<EOF > "$FILE"
+# Issue #${ISSUE_NUMBER}: ${ISSUE_TITLE}
 
-          **Repository:** \`${REPO_FULL}\`
-          **Issue URL:** [${ISSUE_URL}](${ISSUE_URL})
-          **Author:** \`${ISSUE_AUTHOR}\`
-          **State:** \`${ISSUE_STATE}\`
-          **Labels:** ${ISSUE_LABELS}
-          **Assignees:** ${ISSUE_ASSIGNEES}
-          **Created:** ${ISSUE_CREATED_AT}
-          **Last Updated:** ${ISSUE_UPDATED_AT}
+**Repository:** \`${REPO_FULL}\`
+**Issue URL:** [${ISSUE_URL}](${ISSUE_URL})
+**Author:** \`${ISSUE_AUTHOR}\`
+**State:** \`${ISSUE_STATE}\`
+**Labels:** ${ISSUE_LABELS}
+**Assignees:** ${ISSUE_ASSIGNEES}
+**Created:** ${ISSUE_CREATED_AT}
+**Last Updated:** ${ISSUE_UPDATED_AT}
 
-          ---
+---
 
-          ## Original Issue Description
+## Original Issue Description
 
-          ${ISSUE_BODY_TEXT}
+${ISSUE_BODY_TEXT}
 
-          ---
+---
 
-          ## Printable Worksheet
+## Printable Worksheet
 
-          > Use the sections below to capture the current understanding of this issue, decisions, and next steps. This page is designed to be printable.
+> Use the sections below to capture the current understanding of this issue, decisions, and next steps. This page is designed to be printable.
 
-          ### 1. Summary / Problem Statement
+### 1. Summary / Problem Statement
 
-          -
+-
 
-          ### 2. Context & Background
+### 2. Context & Background
 
-          -
+-
 
-          ### 3. Stakeholders / Owners
+### 3. Stakeholders / Owners
 
-          - Primary owner:
-          - Other stakeholders:
+- Primary owner:
+- Other stakeholders:
 
-          ### 4. Requirements / Acceptance Criteria
+### 4. Requirements / Acceptance Criteria
 
-          - [ ]
-          - [ ]
+- [ ]
+- [ ]
 
-          ### 5. Constraints & Assumptions
+### 5. Constraints & Assumptions
 
-          -
+-
 
-          ### 6. Risks / Open Questions
+### 6. Risks / Open Questions
 
-          -
+-
 
-          ### 7. Implementation Notes
+### 7. Implementation Notes
 
-          -
+-
 
-          ### 8. Next Actions
+### 8. Next Actions
 
-          - [ ] Action:
-            - Owner:
-            - Due date:
+- [ ] Action:
+  - Owner:
+  - Due date:
 
-          ---
+---
 
-          *Generated automatically from GitHub Issue #${ISSUE_NUMBER} on ${ISSUE_UPDATED_AT}.*
-          EOF
+*Generated automatically from GitHub Issue #${ISSUE_NUMBER} on ${ISSUE_UPDATED_AT}.*
+EOF
 
           echo "Created/Updated $FILE"
 
@@ -209,17 +209,16 @@ jobs:
           # Clean up HTML file
           rm "$HTML_FILE"
 
-      - name: Commit worksheet and PDF
+      - name: Commit PDF only
         run: |
           ISSUE_NUMBER="${{ github.event.issue.number }}"
-          MD_FILE="worksheets/issue-${ISSUE_NUMBER}-worksheet.md"
           PDF_FILE="worksheets/issue-${ISSUE_NUMBER}-worksheet.pdf"
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add "$MD_FILE" "$PDF_FILE"
-          git commit -m "Update worksheet and PDF for issue #${ISSUE_NUMBER}" || echo "No changes to commit"
+          git add "$PDF_FILE"
+          git commit -m "Update PDF worksheet for issue #${ISSUE_NUMBER}" || echo "No changes to commit"
           git push || echo "No changes pushed"
 
       - name: Upload PDF as artifact
@@ -229,14 +228,13 @@ jobs:
           path: worksheets/issue-${{ github.event.issue.number }}-worksheet.pdf
           retention-days: 90
 
-      - name: Comment on issue with worksheet location
+      - name: Comment on issue with PDF location
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
             const issueNumber = context.issue.number;
-            const mdPath = `worksheets/issue-${issueNumber}-worksheet.md`;
             const pdfPath = `worksheets/issue-${issueNumber}-worksheet.pdf`;
             const runId = context.runId;
             const artifactUrl = `https://github.com/${owner}/${repo}/actions/runs/${runId}`;
@@ -245,5 +243,5 @@ jobs:
               owner,
               repo,
               issue_number: issueNumber,
-              body: `📄 This issue was edited. A printable worksheet has been updated:\n\n- **Markdown:** [\`${mdPath}\`](https://github.com/${owner}/${repo}/blob/main/${mdPath})\n- **PDF:** [\`${pdfPath}\`](https://github.com/${owner}/${repo}/blob/main/${pdfPath})\n- **Artifact:** [Download from workflow run](${artifactUrl})`
+              body: `📄 Issue card PDF generated!\n\n- **PDF:** [\`${pdfPath}\`](https://github.com/${owner}/${repo}/blob/main/${pdfPath})\n- **Download:** [Artifact from workflow run](${artifactUrl})`
             });
