@@ -1,10 +1,8 @@
-name: Issue Trigger Test
+name: Issue Reopened Worksheet
 
 on:
   issues:
     types:
-      - opened
-      - edited
       - reopened
   workflow_dispatch:
     inputs:
@@ -18,7 +16,7 @@ permissions:
   issues: write
 
 jobs:
-  test-trigger:
+  build-worksheet:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,44 +28,47 @@ jobs:
       - name: Debug event
         run: |
           echo "Event name: $GITHUB_EVENT_NAME"
+          echo "Action: ${{ github.event.action }}"
+          echo "Issue number (from context): ${{ github.event.issue.number }}"
+          echo "Issue title (from context): ${{ github.event.issue.title }}"
+          echo "Manual input issue-number: ${{ github.event.inputs.issue-number }}"
           echo "Raw event payload:"
           cat "$GITHUB_EVENT_PATH"
 
-      - name: Determine issue metadata (auto + manual)
+      # === Pull issue metadata for reopened issues ===
+      - name: Set vars from reopened issue
+        if: github.event_name == 'issues' && github.event.action == 'reopened'
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
         run: |
-          echo "Determining issue metadata..."
-          echo "Event: $GITHUB_EVENT_NAME"
+          echo "Setting env vars from reopened issue..."
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
+          echo "ISSUE_TITLE=$ISSUE_TITLE" >> $GITHUB_ENV
+          {
+            echo 'ISSUE_BODY<<EOF'
+            printf '%s\n' "$ISSUE_BODY"
+            echo 'EOF'
+          } >> $GITHUB_ENV
 
-          ISSUE_NUMBER=""
-          ISSUE_TITLE=""
-          ISSUE_BODY=""
-
-          if [ "$GITHUB_EVENT_NAME" = "issues" ]; then
-            echo "Reading from issues payload using jq..."
-            ISSUE_NUMBER="$(jq -r '.issue.number' "$GITHUB_EVENT_PATH")"
-            ISSUE_TITLE="$(jq -r '.issue.title' "$GITHUB_EVENT_PATH")"
-            ISSUE_BODY="$(jq -r '.issue.body // ""' "$GITHUB_EVENT_PATH")"
-          elif [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
-            echo "Reading from workflow_dispatch inputs..."
-            ISSUE_NUMBER="${{ github.event.inputs.issue-number }}"
-            if [ -n "$ISSUE_NUMBER" ]; then
-              ISSUE_TITLE="Manual run for issue #$ISSUE_NUMBER"
-              ISSUE_BODY="Triggered via workflow_dispatch for issue #$ISSUE_NUMBER."
-            else
-              ISSUE_TITLE="Manual run"
-              ISSUE_BODY="Triggered via workflow_dispatch with no specific issue number."
-            fi
+      # === Manual button path (optional) ===
+      - name: Set vars from manual input
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          INPUT_ISSUE_NUMBER: ${{ github.event.inputs.issue-number }}
+        run: |
+          echo "Setting env vars from manual run..."
+          if [ -n "$INPUT_ISSUE_NUMBER" ]; then
+            ISSUE_NUMBER="$INPUT_ISSUE_NUMBER"
+            ISSUE_TITLE="Manual run for issue #$INPUT_ISSUE_NUMBER"
+            ISSUE_BODY="Triggered via workflow_dispatch for issue #$INPUT_ISSUE_NUMBER."
           else
-            echo "Unsupported event: $GITHUB_EVENT_NAME"
+            ISSUE_NUMBER=""
+            ISSUE_TITLE="Manual run (no issue)"
+            ISSUE_BODY="Triggered via workflow_dispatch with no specific issue number."
           fi
 
-          echo "Resolved ISSUE_NUMBER: $ISSUE_NUMBER"
-          echo "Resolved ISSUE_TITLE: $ISSUE_TITLE"
-          echo "Resolved ISSUE_BODY (first 200 chars):"
-          printf '%s\n' "$ISSUE_BODY" | head -c 200 || true
-          echo ""
-
-          # Export to GITHUB_ENV so later steps can use them
           echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
           echo "ISSUE_TITLE=$ISSUE_TITLE" >> $GITHUB_ENV
           {
@@ -87,11 +88,9 @@ jobs:
           ISSUE_TITLE: ${{ env.ISSUE_TITLE }}
           ISSUE_BODY: ${{ env.ISSUE_BODY }}
 
-      - name: Write test markdown
+      - name: Write worksheet markdown
         run: |
           mkdir -p worksheets
-
-          # If we don't have a number, use 'manual' as the suffix
           SUFFIX="${ISSUE_NUMBER:-manual}"
           FILE="worksheets/test-${SUFFIX}.md"
 
@@ -112,24 +111,23 @@ jobs:
           ISSUE_TITLE: ${{ env.ISSUE_TITLE }}
           ISSUE_BODY: ${{ env.ISSUE_BODY }}
 
-      - name: Commit worksheet (if issue number present)
-        if: env.ISSUE_NUMBER != ''
+      - name: Commit worksheet (only if we have an issue number)
+        if: env.ISSUE_NUMBER != '' && github.event_name != 'workflow_dispatch'
         run: |
           FILE="worksheets/test-${ISSUE_NUMBER}.md"
-
           echo "Preparing to commit $FILE"
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add "$FILE"
-          git commit -m "Add worksheet for issue #${ISSUE_NUMBER}" || echo "No changes to commit"
+          git commit -m "Add worksheet for reopened issue #${ISSUE_NUMBER}" || echo "No changes to commit"
           git push || echo "No changes pushed"
         env:
           ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
 
-      - name: Comment on issue (only if we have an issue number)
-        if: env.ISSUE_NUMBER != ''
+      - name: Comment on issue (only for real reopened issues)
+        if: env.ISSUE_NUMBER != '' && github.event_name == 'issues' && github.event.action == 'reopened'
         uses: actions/github-script@v6
         env:
           ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
@@ -139,11 +137,11 @@ jobs:
             const issueNumber = Number(process.env.ISSUE_NUMBER);
             const { owner, repo } = context.repo;
 
-            core.info(`Commenting on issue #${issueNumber} in ${owner}/${repo}`);
+            core.info(`Commenting on reopened issue #${issueNumber} in ${owner}/${repo}`);
 
             await github.rest.issues.createComment({
               owner,
               repo,
               issue_number: issueNumber,
-              body: `✅ Test passed! Markdown file created and committed at \`worksheets/test-${issueNumber}.md\`.`
+              body: `♻️ Issue was reopened. Worksheet updated at \`worksheets/test-${issueNumber}.md\`.`
             });
