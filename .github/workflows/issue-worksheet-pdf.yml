@@ -72,13 +72,20 @@ jobs:
               function expandDetails(md) {
                 if (!md) return md;
 
-                return md
-                  // Turn <summary>Title</summary> into a bold line
-                  .replace(/<summary>([\s\S]*?)<\/summary>/gi, "\n\n**$1**\n\n")
-                  // Remove any <details ...> opening tag
-                  .replace(/<details[^>]*>/gi, "")
-                  // Remove closing </details>
-                  .replace(/<\/details>/gi, "");
+                // 1) Convert <summary>...</summary> into a bold heading line
+                //    and strip inner HTML tags for cleaner text
+                md = md.replace(/<summary>([\s\S]*?)<\/summary>/gi, (_match, inner) => {
+                  const plain = inner.replace(/<\/?[^>]+>/g, ""); // remove HTML tags
+                  return `\n\n**${plain.trim()}**\n\n`;
+                });
+
+                // 2) Remove any <details ...> opening tag
+                md = md.replace(/<details[^>]*>/gi, "");
+
+                // 3) Remove closing </details>
+                md = md.replace(/<\/details>/gi, "");
+
+                return md;
               }
 
               // Original issue body (markdown + HTML)
@@ -139,16 +146,29 @@ jobs:
               core.setFailed(err.message || String(err));
             }
 
-      # 3. Convert the temporary Markdown → PDF into the worksheets folder
+      # 3. Convert the temporary Markdown → PDF into tmp_worksheets
       - name: Convert issue markdown to PDF
         uses: baileyjm02/markdown-to-pdf@v1
         with:
           # TEMP file created above (relative to /github/workspace)
           input_path: ${{ steps.build_md.outputs.md-path }}
-          # PDF output folder INSIDE the repo
-          output_dir: worksheets
+          # Let the action write the PDF next to the markdown (tmp_worksheets)
+          output_dir: tmp_worksheets
           build_html: false
           build_pdf: true
+
+      # 3b. Move the generated PDF into the worksheets/ folder in the repo
+      - name: Move PDF into worksheets
+        run: |
+          mkdir -p worksheets
+          n="${{ steps.build_md.outputs.issue-number }}"
+          if [ -f "tmp_worksheets/issue-${n}.pdf" ]; then
+            mv "tmp_worksheets/issue-${n}.pdf" "worksheets/issue-${n}.pdf"
+            echo "Moved tmp_worksheets/issue-${n}.pdf -> worksheets/issue-${n}.pdf"
+          else
+            echo "No tmp_worksheets/issue-${n}.pdf found. Listing tmp_worksheets:"
+            ls -R
+          fi
 
       # 4. Commit ONLY the PDFs back to main
       - name: Commit worksheet PDF
