@@ -2,7 +2,7 @@ name: Issue Edited Worksheet
 
 on:
   issues:
-    types: [edited]   # ✅ ONLY trigger when an issue is edited
+    types: edited   # ✅ ONLY trigger when an issue is edited
 
 permissions:
   contents: write
