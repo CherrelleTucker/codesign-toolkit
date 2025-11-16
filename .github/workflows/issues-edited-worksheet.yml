@@ -13,18 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Debug event details
-        run: |
-          echo "==================== EVENT DEBUG ===================="
-          echo "Event name: $GITHUB_EVENT_NAME"
-          echo "Action: ${{ github.event.action }}"
-          echo "Issue: #${{ github.event.issue.number }} - ${{ github.event.issue.title }}"
-          echo "State: ${{ github.event.issue.state }}"
-          echo "===================================================="
-          echo "Full event payload:"
-          cat "$GITHUB_EVENT_PATH" | jq '.'
-          echo "===================================================="
-
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
