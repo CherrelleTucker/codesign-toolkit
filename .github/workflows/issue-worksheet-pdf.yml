@@ -1,22 +1,16 @@
 name: Issue Worksheet PDF
 
 on:
-  # Automatically run on issue activity
   issues:
-    types:
-      - opened
-      - edited
-      - reopened
+    types: [opened, edited, reopened]
 
-  # Allow manual runs from the Actions tab
   workflow_dispatch:
     inputs:
       issue-number:
-        description: 'Issue number to build/update worksheet for'
+        description: "Issue number to rebuild PDF for"
         required: true
         type: number
 
-# Needed so the workflow can push PDFs and comment on issues
 permissions:
   contents: write
   issues: write
@@ -26,106 +20,100 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Get repo contents so we can write into codesign-toolkit/worksheets/
+      # 1. Pull the repo so we can write worksheets into it
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          # If your default branch is not "main", change this.
           ref: main
 
-      # 2) Build the worksheet .md file from the issue
-      - name: Build worksheet markdown from issue
+      # 2. Build the worksheet markdown file from issue data
+      - name: Build worksheet markdown
         id: build_md
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const fs = require('fs');
-            const path = require('path');
-
+            const fs = require("fs");
+            const path = require("path");
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
-            // 1. Get the issue, depending on how we were triggered
             let issue;
 
+            // Determine how the workflow was triggered
             if (context.payload.issue) {
-              // issues: opened / edited / reopened
               issue = context.payload.issue;
             } else {
-              // workflow_dispatch: use the input
-              const inputs = context.payload.inputs || {};
-              const issueNumber = Number(inputs['issue-number']);
-
+              const issueNumber = Number(context.payload.inputs["issue-number"]);
               if (!issueNumber) {
-                core.setFailed('No issue context and no issue-number input.');
+                core.setFailed("No issue-number provided.");
                 return;
               }
-
               const { data } = await github.rest.issues.get({
                 owner,
                 repo,
-                issue_number: issueNumber,
+                issue_number: issueNumber
               });
               issue = data;
             }
 
-            const issueNumber = issue.number;
+            const n = issue.number;
 
-            // 2. Prepare paths
-            const dir = path.join('codesign-toolkit', 'worksheets');
+            // Prepare folder
+            const dir = path.join("codesign-toolkit", "worksheets");
             fs.mkdirSync(dir, { recursive: true });
 
-            const mdFilename = `issue-${issueNumber}.md`;
+            const mdFilename = `issue-${n}.md`;
             const mdPath = path.join(dir, mdFilename);
 
-            // 3. Gather some metadata
-            const labels =
-              (issue.labels || [])
-                .map(l => typeof l === 'string' ? l : l.name)
-                .join(', ') || 'None';
+            // Build metadata
+            const labels = (issue.labels || [])
+              .map(l => (typeof l === "string" ? l : l.name))
+              .join(", ") || "None";
 
-            const body = issue.body || '_No description provided._';
+            const assignees = (issue.assignees || [])
+              .map(a => a.login)
+              .join(", ") || "None";
 
-            // 4. Build worksheet Markdown content
-            const content = [
-              `# Issue #${issueNumber}: ${issue.title}`,
-              '',
-              `**State:** ${issue.state}`,
-              `**Author:** @${issue.user.login}`,
+            const bodyText = issue.body || "_No description provided._";
+
+            // Build markdown content for worksheet
+            const md = [
+              `# Issue #${n}: ${issue.title}`,
+              "",
+              `**Repository:** \`${owner}/${repo}\``,
+              `**URL:** ${issue.html_url}`,
+              `**Author:** @${issue.user?.login || "unknown"}`,
+              `**State:** \`${issue.state}\``,
+              `**Labels:** ${labels}`,
+              `**Assignees:** ${assignees}`,
               `**Created:** ${issue.created_at}`,
               `**Updated:** ${issue.updated_at}`,
-              `**Labels:** ${labels}`,
-              `**URL:** ${issue.html_url}`,
-              '',
-              '---',
-              '',
-              body,
-              '',
-            ].join('\n');
+              "",
+              "---",
+              "",
+              bodyText,
+              ""
+            ].join("\n");
 
-            // 5. Write file
-            fs.writeFileSync(mdPath, content, { encoding: 'utf8' });
+            // Write file
+            fs.writeFileSync(mdPath, md, "utf8");
 
-            // 6. Expose outputs for later steps
-            const pdfPath = mdPath.replace(/\.md$/i, '.pdf');
+            // Outputs for later steps
+            core.setOutput("issue-number", String(n));
+            core.setOutput("md-path", mdPath);
+            core.setOutput("pdf-path", mdPath.replace(/\.md$/, ".pdf"));
 
-            core.setOutput('issue-number', String(issueNumber));
-            core.setOutput('md-path', mdPath);
-            core.setOutput('pdf-path', pdfPath);
-
-      # 3) Convert that Markdown worksheet to PDF
-      - name: Convert worksheet Markdown to PDF
+      # 3. Convert Markdown → PDF
+      - name: Convert worksheet to PDF
         uses: baileyjm02/markdown-to-pdf@v1
         with:
-          # Single file created above
           input_path: ${{ steps.build_md.outputs.md-path }}
-          # Output directory (same folder, to keep things tidy)
           output_dir: codesign-toolkit/worksheets
           build_html: false
           build_pdf: true
 
-      # 4) Commit worksheet + PDF back to main
+      # 4. Commit the updated markdown + PDF back to main
       - name: Commit worksheet & PDF
         run: |
           git config user.name "github-actions[bot]"
@@ -140,8 +128,8 @@ jobs:
             git push
           fi
 
-      # 5) Comment on the issue with a link to the PDF
-      - name: Comment link on issue
+      # 5. Comment on the issue with a PDF link
+      - name: Comment PDF link on issue
         uses: actions/github-script@v7
         env:
           ISSUE_NUMBER: ${{ steps.build_md.outputs.issue-number }}
@@ -151,26 +139,23 @@ jobs:
           script: |
             const owner = context.repo.owner;
             const repo = context.repo.repo;
-
             const issueNumber = Number(process.env.ISSUE_NUMBER);
-            const pdfPath = process.env.PDF_PATH.replace(/^\.?\/?/, '');
-
-            // If your default branch is not main, change here.
-            const branch = 'main';
+            const pdfPath = process.env.PDF_PATH.replace(/^\.?\/?/, "");
+            const branch = "main";
 
             const url = `https://github.com/${owner}/${repo}/blob/${branch}/${pdfPath}?raw=1`;
 
-            const bodyLines = [
-              '📄 **Issue Worksheet PDF**',
-              '',
-              'A worksheet PDF has been generated or updated for this issue.',
-              '',
-              `[Download the worksheet PDF](${url})`
-            ];
+            const body = [
+              "📄 **Your worksheet PDF is ready!**",
+              "",
+              `[Click here to download the PDF](${url})`,
+              "",
+              "_This PDF updates automatically whenever this issue is edited._"
+            ].join("\n");
 
             await github.rest.issues.createComment({
               owner,
               repo,
               issue_number: issueNumber,
-              body: bodyLines.join('\n'),
+              body
             });
