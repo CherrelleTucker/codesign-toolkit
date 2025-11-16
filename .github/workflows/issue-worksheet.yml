@@ -39,8 +39,8 @@ jobs:
           {
             echo "# ${ISSUE_TITLE}";
             echo;
-            echo "> Printable worksheet generated from Issue #${ISSUE_NUMBER}";
-            echo "> Source: ${ISSUE_URL}";
+            echo "Printable worksheet generated from Issue #${ISSUE_NUMBER}";
+            echo "Source: ${ISSUE_URL}";
             echo;
             echo "---";
             echo;
