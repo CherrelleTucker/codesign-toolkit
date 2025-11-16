@@ -1,12 +1,12 @@
-name: Generate Issue Worksheet
+name: Generate Printable Worksheet
 
 on:
   issues:
     types: [opened, edited, reopened]
 
 permissions:
-  contents: write      # commit the worksheet file
-  issues: write        # add label + comment
+  contents: write
+  issues: write
 
 jobs:
   build-worksheet:
@@ -16,154 +16,63 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Extract issue metadata from event
+      - name: Read event payload
+        id: event
         run: |
-          echo "Extracting issue metadata from $GITHUB_EVENT_PATH"
           ISSUE_NUMBER=$(jq -r '.issue.number' "$GITHUB_EVENT_PATH")
           ISSUE_TITLE=$(jq -r '.issue.title' "$GITHUB_EVENT_PATH")
           ISSUE_URL=$(jq -r '.issue.html_url' "$GITHUB_EVENT_PATH")
-          ISSUE_LABELS=$(jq -r '[.issue.labels[].name] | join(", ")' "$GITHUB_EVENT_PATH")
           ISSUE_BODY=$(jq -r '.issue.body // ""' "$GITHUB_EVENT_PATH")
 
-          # Save into environment for later steps
-          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> "$GITHUB_ENV"
-          echo "ISSUE_TITLE=$ISSUE_TITLE" >> "$GITHUB_ENV"
-          echo "ISSUE_URL=$ISSUE_URL" >> "$GITHUB_ENV"
-          echo "ISSUE_LABELS=$ISSUE_LABELS" >> "$GITHUB_ENV"
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
+          echo "ISSUE_TITLE=$ISSUE_TITLE" >> $GITHUB_ENV
+          echo "ISSUE_URL=$ISSUE_URL" >> $GITHUB_ENV
 
-          # Save body to a file (can be multi-line)
           printf "%s\n" "$ISSUE_BODY" > issue_body.txt
 
-      - name: Ensure worksheets folder exists
+      - name: Ensure worksheets directory exists
         run: mkdir -p worksheets
 
-      - name: Generate worksheet Markdown file
+      - name: Generate worksheet file
         run: |
-          ISSUE_FILE="worksheets/issue-${ISSUE_NUMBER}.md"
+          FILE_PATH="worksheets/issue-${ISSUE_NUMBER}.md"
 
-          echo "Writing worksheet to $ISSUE_FILE"
+          cat > "$FILE_PATH" <<EOF
+# ${ISSUE_TITLE}
 
-          # Start fresh
-          cat > "$ISSUE_FILE" <<EOF
-# 📝 Issue Worksheet for #${ISSUE_NUMBER}
-
-**Title:** ${ISSUE_TITLE}  
-**URL:** ${ISSUE_URL}  
-**Labels:** ${ISSUE_LABELS}
+> Printable worksheet generated from Issue #${ISSUE_NUMBER}  
+> Source: ${ISSUE_URL}
 
 ---
-
-## 1. Issue Snapshot
-
-- **Issue Number:** #${ISSUE_NUMBER}
-- **Title:** ${ISSUE_TITLE}
-- **URL:** ${ISSUE_URL}
-- **Labels:** ${ISSUE_LABELS}
-
----
-
-## 2. Original Description (reference)
-
-(Autofilled from the issue body. Use sections below for your working notes.)
-
--------------------- ORIGINAL ISSUE BODY --------------------
 
 EOF
 
-          # Append the raw issue body
-          cat issue_body.txt >> "$ISSUE_FILE"
+          # Append the raw issue body exactly as-is
+          cat issue_body.txt >> "$FILE_PATH"
 
-          cat >> "$ISSUE_FILE" <<'EOF'
-
--------------------- END ORIGINAL ISSUE BODY --------------------
-
-## 3. Problem / Need Statement
-
-> In your own words, summarize the core problem or need this issue represents.
-
-- What is the main challenge?
-- Who is impacted?
-- Why does this matter now?
-
-**Summary notes:**
-
----
-
-## 4. Current Workflow / Context
-
-> Map the current workflow or situation *before* any Solution Product changes it.
-
-- What are the current steps?
-- Who touches this at each step?
-- Where are the bottlenecks, pain points, or risks?
-
-**Notes:**
-
----
-
-## 5. Desired Outcome / Success Criteria
-
-> What does “success” look like from the stakeholder / user perspective?
-
-- What will be easier, faster, or more accurate?
-- How would you explain the improvement to a non-technical stakeholder?
-
-**Success looks like:**
-
----
-
-## 6. Assumptions & Open Questions
-
-- **Assumptions:**
-  - [ ] 
-  - [ ] 
-
-- **Open Questions:**
-  - [ ] 
-  - [ ] 
-
----
-
-## 7. Next Actions
-
-> Concrete, small next steps from this worksheet.
-
-- [ ] 
-- [ ] 
-- [ ] 
-
-EOF
-
-      - name: Commit worksheet to repository
+      - name: Commit worksheet file
         run: |
           if [[ -n "$(git status --porcelain)" ]]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
             git add worksheets/
-            git commit -m "chore: add/update worksheet for issue #${ISSUE_NUMBER}"
+            git commit -m "Generate/update worksheet for issue #${ISSUE_NUMBER}"
             git push
           else
             echo "No changes to commit."
           fi
 
-      - name: Add 'worksheet-generated' label
-        uses: actions-ecosystem/action-add-labels@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          labels: worksheet-generated
-
       - name: Comment with worksheet link
         uses: peter-evans/create-or-update-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ github.event.issue.number }}
+          issue-number: ${{ env.ISSUE_NUMBER }}
           comment-identifier: worksheet-link
           body: |
-            📄 **Your worksheet has been generated for this issue.**
+            📄 **Your printable worksheet is ready.**
 
-            You can view or print it here:
+            View or print it here:
 
-            https://github.com/${{ github.repository }}/blob/main/worksheets/issue-${{ github.event.issue.number }}.md
+            https://github.com/${{ github.repository }}/blob/main/worksheets/issue-${{ env.ISSUE_NUMBER }}.md
 
-            This file will auto-update whenever the issue is edited or reopened.
+            This worksheet will automatically update whenever this issue is edited or reopened.
