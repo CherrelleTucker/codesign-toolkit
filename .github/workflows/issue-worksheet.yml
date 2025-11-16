@@ -1,4 +1,4 @@
-name: Test Issue Trigger
+name: Issue Trigger Test
 
 on:
   issues:
@@ -8,12 +8,42 @@ on:
       - reopened
 
 permissions:
-  issues: write  # Needed to post comments on issues
+  contents: write
+  issues: write
 
 jobs:
   test-trigger:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Extract issue info
+        id: gather
+        run: |
+          ISSUE_NUMBER="$(jq -r '.issue.number' "$GITHUB_EVENT_PATH")"
+          ISSUE_TITLE="$(jq -r '.issue.title' "$GITHUB_EVENT_PATH")"
+          ISSUE_BODY="$(jq -r '.issue.body' "$GITHUB_EVENT_PATH")"
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
+          echo "ISSUE_TITLE=$ISSUE_TITLE" >> $GITHUB_ENV
+          echo "ISSUE_BODY<<EOF" >> $GITHUB_ENV
+          echo "$ISSUE_BODY" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Write test markdown
+        env:
+          ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
+          ISSUE_TITLE: ${{ env.ISSUE_TITLE }}
+          ISSUE_BODY: ${{ env.ISSUE_BODY }}
+        run: |
+          mkdir -p worksheets
+          {
+            echo "# Issue $ISSUE_NUMBER: $ISSUE_TITLE"
+            echo ""
+            echo "## Body"
+            echo "$ISSUE_BODY"
+          } > "worksheets/test-${ISSUE_NUMBER}.md"
+
       - name: Comment on issue
         uses: actions/github-script@v6
         with:
@@ -22,10 +52,9 @@ jobs:
             const issueNumber = context.issue.number;
             const repoOwner = context.repo.owner;
             const repoName = context.repo.repo;
-
             await github.rest.issues.createComment({
               owner: repoOwner,
               repo: repoName,
               issue_number: issueNumber,
-              body: "✅ Issue trigger test: workflow ran successfully!"
+              body: `✅ Test passed! Markdown file created at \`worksheets/test-${issueNumber}.md\`.`
             });
