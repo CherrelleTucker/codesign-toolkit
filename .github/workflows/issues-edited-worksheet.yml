@@ -112,7 +112,7 @@ ${body}
           NODE
 
       - name: Convert markdown to PDF
-        uses: BaileyJM02/markdown-to-pdf@v1
+        uses: BaileyJM02/markdown-to-pdf@v1.2.0
         with:
           input_path: worksheets/issue-${{ github.event.issue.number }}-worksheet.md
           output_dir: worksheets
