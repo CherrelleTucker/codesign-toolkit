@@ -6,7 +6,12 @@ on:
       - opened
       - edited
       - reopened
-    workflow_dispatch:
+  workflow_dispatch:
+    inputs:
+      issue-number:
+        description: 'Issue number to process when run manually'
+        required: false
+        type: number
 
 permissions:
   contents: write
@@ -15,27 +20,46 @@ permissions:
 jobs:
   test-trigger:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Extract issue info
-        id: gather
+      - name: Debug event payload
+        run: |
+          echo "Event name: $GITHUB_EVENT_NAME"
+          echo "Raw event payload:"
+          cat "$GITHUB_EVENT_PATH"
+
+      # When triggered by an issue event (opened/edited/reopened)
+      - name: Extract issue info from issue event
+        if: github.event_name == 'issues'
         run: |
           ISSUE_NUMBER="$(jq -r '.issue.number' "$GITHUB_EVENT_PATH")"
           ISSUE_TITLE="$(jq -r '.issue.title' "$GITHUB_EVENT_PATH")"
           ISSUE_BODY="$(jq -r '.issue.body' "$GITHUB_EVENT_PATH")"
+
           echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
           echo "ISSUE_TITLE=$ISSUE_TITLE" >> $GITHUB_ENV
           echo "ISSUE_BODY<<EOF" >> $GITHUB_ENV
           echo "$ISSUE_BODY" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
+      # When triggered manually via button
+      - name: Extract issue info from manual input
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          ISSUE_NUMBER="${{ github.event.inputs.issue-number }}"
+          if [ -z "$ISSUE_NUMBER" ]; then
+            echo "No issue number provided for manual run. Skipping issue-specific work."
+            # We’ll still write a dummy file below, but we won’t comment on an issue
+          fi
+
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
+          echo "ISSUE_TITLE=Manual run" >> $GITHUB_ENV
+          echo "ISSUE_BODY=Triggered via workflow_dispatch (no real issue body available)." >> $GITHUB_ENV
+
       - name: Write test markdown
-        env:
-          ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
-          ISSUE_TITLE: ${{ env.ISSUE_TITLE }}
-          ISSUE_BODY: ${{ env.ISSUE_BODY }}
         run: |
           mkdir -p worksheets
           {
@@ -43,16 +67,23 @@ jobs:
             echo ""
             echo "## Body"
             echo "$ISSUE_BODY"
-          } > "worksheets/test-${ISSUE_NUMBER}.md"
+          } > "worksheets/test-${ISSUE_NUMBER:-manual}.md"
 
-      - name: Comment on issue
+      - name: Comment on issue (only if we have an issue number)
+        if: env.ISSUE_NUMBER != ''
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const issueNumber = context.issue.number;
+            const issueNumber = Number(process.env.ISSUE_NUMBER);
             const repoOwner = context.repo.owner;
             const repoName = context.repo.repo;
+
+            if (!issueNumber) {
+              core.info('No valid issue number, skipping comment.');
+              return;
+            }
+
             await github.rest.issues.createComment({
               owner: repoOwner,
               repo: repoName,
