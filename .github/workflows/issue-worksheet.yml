@@ -1,0 +1,147 @@
+name: Generate Issue Worksheet
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+
+permissions:
+  contents: write      # to commit the worksheet file
+  issues: write        # to comment + label
+
+jobs:
+  build-worksheet:
+    runs-on: ubuntu-latest
+
+    env:
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      ISSUE_TITLE: ${{ github.event.issue.title }}
+      ISSUE_URL: ${{ github.event.issue.html_url }}
+      ISSUE_LABELS: ${{ join(github.event.issue.labels.*.name, ', ') }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Ensure worksheets folder exists
+        run: mkdir -p worksheets
+
+      - name: Generate worksheet Markdown file
+        run: |
+          ISSUE_FILE="worksheets/issue-${ISSUE_NUMBER}.md"
+
+          cat > "$ISSUE_FILE" <<EOF
+# 📝 Issue Worksheet for #${ISSUE_NUMBER}
+
+**Title:** ${ISSUE_TITLE}  
+**URL:** ${ISSUE_URL}  
+**Labels:** ${ISSUE_LABELS}
+
+---
+
+## 1. Issue Snapshot
+
+- **Issue Number:** #${ISSUE_NUMBER}
+- **Title:** ${ISSUE_TITLE}
+- **URL:** ${ISSUE_URL}
+- **Labels:** ${ISSUE_LABELS}
+
+---
+
+## 2. Original Description (reference)
+
+\`\`\`text
+${{ github.event.issue.body || '' }}
+\`\`\`
+
+---
+
+## 3. Problem / Need Statement
+
+> In your own words, summarize the core problem or need this issue represents.
+
+- What is the main challenge?
+- Who is impacted?
+- Why does this matter now?
+
+**Summary notes:**
+
+---
+
+## 4. Current Workflow / Context
+
+> Map the current workflow or situation *before* any Solution Product changes it.
+
+- What are the current steps?
+- Who touches this at each step?
+- Where are the bottlenecks, pain points, or risks?
+
+**Notes:**
+
+---
+
+## 5. Desired Outcome / Success Criteria
+
+> What does “success” look like from the stakeholder / user perspective?
+
+- What will be easier, faster, or more accurate?
+- How would you explain the improvement to a non-technical stakeholder?
+
+**Success looks like:**
+
+---
+
+## 6. Assumptions & Open Questions
+
+- **Assumptions:**
+  - [ ] 
+  - [ ] 
+
+- **Open Questions:**
+  - [ ] 
+  - [ ] 
+
+---
+
+## 7. Next Actions
+
+> Concrete, small next steps from this worksheet.
+
+- [ ] 
+- [ ] 
+- [ ] 
+
+EOF
+
+      - name: Commit worksheet to repository
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+            git add worksheets/
+            git commit -m "chore: add/update worksheet for issue #${ISSUE_NUMBER}"
+            git push
+          else
+            echo "No changes to commit."
+          fi
+
+      - name: Add 'worksheet-generated' label (optional)
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          labels: worksheet-generated
+
+      - name: Comment with worksheet link (or update existing comment)
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ env.ISSUE_NUMBER }}
+          comment-identifier: worksheet-link
+          body: |
+            📄 **Your worksheet has been generated for this issue.**
+
+            You can view or print it here:
+
+            https://github.com/${{ github.repository }}/blob/main/worksheets/issue-${{ env.ISSUE_NUMBER }}.md
+
+            This file will auto-update whenever the issue is edited or reopened.
