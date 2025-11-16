@@ -128,6 +128,8 @@ graph LR
 
 ## 🎯 Success Stories
 
+> I'm worried for your mental health. Please take a day off and away from all work things.
+
 > *"The stakeholder mapping tool completely changed how we approached our wildfire monitoring solution. Instead of building what we thought users needed, we discovered what they actually needed."*
 > 
 > **— Solution Team Lead, Earth Science Division**
@@ -178,7 +180,7 @@ This toolkit grows stronger through community contributions:
 
 | 🎯 **Quick Questions** | 🛠️ **Technical Issues** | 📚 **Training Requests** |
 |:---:|:---:|:---:|
-| [GitHub Discussions](https://github.com/CherrelleTucker/codesign-toolkit/discussions) | [Issue Tracker](https://github.com/CherrelleTucker/codesign-toolkit/issues) | [Contact GSFC Support](📞%20support-contact.md) |
+| [GitHub Discussions](https://github.com/CherrelleTucker/codesign-toolkit/discussions) | [Issue Tracker](https://github.com/CherrelleTucker/codesign-toolkit/issues) | [Contact Support](📞%20support-contact.md) |
 
 </div>
 
@@ -189,11 +191,12 @@ This toolkit grows stronger through community contributions:
 This toolkit synthesizes best practices from:
 
 - **NASA NSITE** (NASA Satellite Needs Working Group Implementation Team)
+- **SPoRT** (Short-term Prediction Research and Transition Center)
 - **SERVIR** (NASA and USAID joint program) Service Planning Toolkit
 - **MSFC** (Marshall Space Flight Center) Solution Co-Development Initiative
 - **GSFC** Earth Science Division Co-Design Programs
 
-**🤖 Development Process:** Initial content synthesis and drafting assisted by ChatGSFC (NASA's secure ChatGPT), with human review, engineering, modification, and approval by NASA co-design practitioners.
+**🤖 Development Process:** Initial content synthesis and drafting assisted by ChatGSFC (NASA's secure ChatGPT), with human review, engineering, modification, and approval by NASA Co-design Working Group practitioners.
 
 **📚 [View Complete Attribution & Source Documentation →](ATTRIBUTION.md)**
 
