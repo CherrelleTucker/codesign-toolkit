@@ -2,7 +2,7 @@ name: Issue Edited Worksheet
 
 on:
   issues:
-    types: [edited]   # ✅ ONLY run when an issue is edited
+    types: [opened, edited]  # Add 'opened' for testing too
 
 permissions:
   contents: write
@@ -11,165 +11,18 @@ permissions:
 jobs:
   build-worksheet:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Debug event
+      - name: Debug event details
         run: |
-          echo "Event:  $GITHUB_EVENT_NAME"
+          echo "==================== EVENT DEBUG ===================="
+          echo "Event name: $GITHUB_EVENT_NAME"
           echo "Action: ${{ github.event.action }}"
-          echo "Issue:  #${{ github.event.issue.number }} – ${{ github.event.issue.title }}"
-          echo "State:  ${{ github.event.issue.state }}"
+          echo "Issue: #${{ github.event.issue.number }} – ${{ github.event.issue.title }}"
+          echo "State: ${{ github.event.issue.state }}"
+          echo "===================================================="
+          echo "Full event payload:"
+          cat "$GITHUB_EVENT_PATH" | jq '.'
+          echo "===================================================="
 
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: true
-
-      # Use github-script to gather all the metadata and export as env vars
-      - name: Prepare issue metadata
-        id: meta
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const issue = context.payload.issue;
-            const repoFull = `${context.repo.owner}/${context.repo.repo}`;
-
-            const labels = (issue.labels || []).map(l => l.name).join(', ') || 'None';
-            const assignees = (issue.assignees || []).map(a => a.login).join(', ') || 'None';
-
-            core.exportVariable('ISSUE_NUMBER', issue.number.toString());
-            core.exportVariable('ISSUE_TITLE', issue.title || '');
-            core.exportVariable('ISSUE_BODY', issue.body || '');
-            core.exportVariable('ISSUE_URL', issue.html_url || '');
-            core.exportVariable('ISSUE_STATE', issue.state || '');
-            core.exportVariable('ISSUE_CREATED_AT', issue.created_at || '');
-            core.exportVariable('ISSUE_UPDATED_AT', issue.updated_at || '');
-            core.exportVariable('ISSUE_AUTHOR', issue.user?.login || '');
-            core.exportVariable('ISSUE_LABELS', labels);
-            core.exportVariable('ISSUE_ASSIGNEES', assignees);
-            core.exportVariable('REPO_FULL', repoFull);
-
-            core.info(`Prepared metadata for issue #${issue.number}`);
-
-      - name: Build printable worksheet markdown
-        run: |
-          mkdir -p worksheets
-
-          ISSUE_NUMBER="${ISSUE_NUMBER}"
-          ISSUE_TITLE="${ISSUE_TITLE}"
-          ISSUE_BODY="${ISSUE_BODY}"
-          ISSUE_URL="${ISSUE_URL}"
-          ISSUE_STATE="${ISSUE_STATE}"
-          ISSUE_CREATED_AT="${ISSUE_CREATED_AT}"
-          ISSUE_UPDATED_AT="${ISSUE_UPDATED_AT}"
-          ISSUE_AUTHOR="${ISSUE_AUTHOR}"
-          ISSUE_LABELS="${ISSUE_LABELS}"
-          ISSUE_ASSIGNEES="${ISSUE_ASSIGNEES}"
-          REPO_FULL="${REPO_FULL}"
-
-          FILE="worksheets/issue-${ISSUE_NUMBER}-worksheet.md"
-
-          if [ -z "$ISSUE_BODY" ] || [ "$ISSUE_BODY" = "null" ]; then
-            ISSUE_BODY_TEXT="(No issue body provided.)"
-          else
-            ISSUE_BODY_TEXT="$ISSUE_BODY"
-          fi
-
-          cat > "$FILE" <<EOF
-# Issue #${ISSUE_NUMBER}: ${ISSUE_TITLE}
-
-**Repository:** \`${REPO_FULL}\`  
-**Issue URL:** [${ISSUE_URL}](${ISSUE_URL})  
-**Author:** \`${ISSUE_AUTHOR}\`  
-**State:** \`${ISSUE_STATE}\`  
-**Labels:** ${ISSUE_LABELS}  
-**Assignees:** ${ISSUE_ASSIGNEES}  
-**Created:** ${ISSUE_CREATED_AT}  
-**Last Updated:** ${ISSUE_UPDATED_AT}  
-
----
-
-## Original Issue Description
-
-${ISSUE_BODY_TEXT}
-
----
-
-## Printable Worksheet
-
-> Use the sections below to capture the current understanding of this issue, decisions, and next steps. This page is designed to be printable.
-
-### 1. Summary / Problem Statement
-
--  
-
-### 2. Context & Background
-
--  
-
-### 3. Stakeholders / Owners
-
-- Primary owner:
-- Other stakeholders:
-
-### 4. Requirements / Acceptance Criteria
-
-- [ ]  
-- [ ]  
-
-### 5. Constraints & Assumptions
-
--  
-
-### 6. Risks / Open Questions
-
--  
-
-### 7. Implementation Notes
-
--  
-
-### 8. Next Actions
-
-- [ ] Action:
-  - Owner:
-  - Due date:
-
----
-
-*Generated automatically from GitHub Issue #${ISSUE_NUMBER} on ${ISSUE_UPDATED_AT}.*
-
-EOF
-
-          echo "Created/Updated $FILE"
-
-      - name: Commit worksheet
-        run: |
-          FILE="worksheets/issue-${ISSUE_NUMBER}-worksheet.md"
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add "$FILE"
-          git commit -m "Update worksheet for edited issue #${ISSUE_NUMBER}" || echo "No changes to commit"
-          git push || echo "No changes pushed"
-        env:
-          ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
-
-      - name: Comment on issue with worksheet location
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { owner, repo } = context.repo;
-            const issueNumber = context.issue.number;
-            const filePath = `worksheets/issue-${issueNumber}-worksheet.md`;
-            const link = `\`${filePath}\``;
-
-            await github.rest.issues.createComment({
-              owner,
-              repo,
-              issue_number: issueNumber,
-              body: `📝 This issue was edited. A printable worksheet has been updated at ${link}.`
-            });
+      # ... rest of your workflow
