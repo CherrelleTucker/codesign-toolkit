@@ -161,14 +161,15 @@ jobs:
               core.setFailed(err.message || String(err));
             }
 
-      # 3. Convert the temporary Markdown → PDF into tmp_worksheets
+      # 3. Convert the temporary Markdown → PDF
+      #    We tell the action to write the PDF into the REPO ROOT as issue-<n>.pdf
       - name: Convert issue markdown to PDF
         uses: baileyjm02/markdown-to-pdf@v1
         with:
           # TEMP file created above (relative to /github/workspace)
           input_path: ${{ steps.build_md.outputs.md-path }}
-          # Let the action write the PDF next to the markdown (tmp_worksheets)
-          output_dir: tmp_worksheets
+          # Put the PDF in the repo root (.)
+          output_dir: .
           build_html: false
           build_pdf: true
 
@@ -177,11 +178,21 @@ jobs:
         run: |
           mkdir -p worksheets
           n="${{ steps.build_md.outputs.issue-number }}"
-          if [ -f "tmp_worksheets/issue-${n}.pdf" ]; then
+
+          # Most likely location: repo root as issue-<n>.pdf
+          if [ -f "issue-${n}.pdf" ]; then
+            mv "issue-${n}.pdf" "worksheets/issue-${n}.pdf"
+            echo "Moved issue-${n}.pdf -> worksheets/issue-${n}.pdf"
+          # Fallback: weird concatenated name like tmp_worksheetsissue-<n>.pdf
+          elif [ -f "tmp_worksheetsissue-${n}.pdf" ]; then
+            mv "tmp_worksheetsissue-${n}.pdf" "worksheets/issue-${n}.pdf"
+            echo "Moved tmp_worksheetsissue-${n}.pdf -> worksheets/issue-${n}.pdf"
+          # Fallback: if the action ever starts respecting the folder again
+          elif [ -f "tmp_worksheets/issue-${n}.pdf" ]; then
             mv "tmp_worksheets/issue-${n}.pdf" "worksheets/issue-${n}.pdf"
             echo "Moved tmp_worksheets/issue-${n}.pdf -> worksheets/issue-${n}.pdf"
           else
-            echo "No tmp_worksheets/issue-${n}.pdf found. Listing tmp_worksheets:"
+            echo "Could not find generated PDF. Listing repo root and tmp_worksheets:"
             ls -R
           fi
 
