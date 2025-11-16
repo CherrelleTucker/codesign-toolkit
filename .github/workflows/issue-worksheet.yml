@@ -16,17 +16,16 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Read event payload
-        id: event
+      - name: Extract issue data
         run: |
           ISSUE_NUMBER=$(jq -r '.issue.number' "$GITHUB_EVENT_PATH")
           ISSUE_TITLE=$(jq -r '.issue.title' "$GITHUB_EVENT_PATH")
           ISSUE_URL=$(jq -r '.issue.html_url' "$GITHUB_EVENT_PATH")
           ISSUE_BODY=$(jq -r '.issue.body // ""' "$GITHUB_EVENT_PATH")
 
-          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
-          echo "ISSUE_TITLE=$ISSUE_TITLE" >> $GITHUB_ENV
-          echo "ISSUE_URL=$ISSUE_URL" >> $GITHUB_ENV
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> "$GITHUB_ENV"
+          echo "ISSUE_TITLE=$ISSUE_TITLE" >> "$GITHUB_ENV"
+          echo "ISSUE_URL=$ISSUE_URL" >> "$GITHUB_ENV"
 
           printf "%s\n" "$ISSUE_BODY" > issue_body.txt
 
@@ -37,18 +36,16 @@ jobs:
         run: |
           FILE_PATH="worksheets/issue-${ISSUE_NUMBER}.md"
 
-          cat > "$FILE_PATH" <<EOF
-# ${ISSUE_TITLE}
-
-> Printable worksheet generated from Issue #${ISSUE_NUMBER}  
-> Source: ${ISSUE_URL}
-
----
-
-EOF
-
-          # Append the raw issue body exactly as-is
-          cat issue_body.txt >> "$FILE_PATH"
+          {
+            echo "# ${ISSUE_TITLE}";
+            echo;
+            echo "> Printable worksheet generated from Issue #${ISSUE_NUMBER}";
+            echo "> Source: ${ISSUE_URL}";
+            echo;
+            echo "---";
+            echo;
+            cat issue_body.txt;
+          } > "$FILE_PATH"
 
       - name: Commit worksheet file
         run: |
@@ -66,13 +63,13 @@ EOF
         uses: peter-evans/create-or-update-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ env.ISSUE_NUMBER }}
+          issue-number: ${{ github.event.issue.number }}
           comment-identifier: worksheet-link
           body: |
             📄 **Your printable worksheet is ready.**
 
             View or print it here:
 
-            https://github.com/${{ github.repository }}/blob/main/worksheets/issue-${{ env.ISSUE_NUMBER }}.md
+            https://github.com/${{ github.repository }}/blob/main/worksheets/issue-${{ github.event.issue.number }}.md
 
             This worksheet will automatically update whenever this issue is edited or reopened.
