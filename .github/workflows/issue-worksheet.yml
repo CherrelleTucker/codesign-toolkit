@@ -2,103 +2,121 @@ name: Issue Worksheet
 
 on:
   issues:
-    types: [opened, edited, reopened]
-    workflow_dispatch:
+    types:
+      - opened
+      - edited
+      - reopened
 
 permissions:
-  contents: write
-  issues: write
+  contents: write   # For committing worksheet files
+  issues: write     # For posting a comment
 
 jobs:
-  build-worksheet:
+  process-issue:
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.event.repository.default_branch }}
 
-      - name: Generate worksheet file
+      - name: Extract issue details
+        id: gather
+        run: |
+          echo "Extracting issue details from GitHub event payload..."
+          ISSUE_NUMBER="$(jq -r '.issue.number' "$GITHUB_EVENT_PATH")"
+          ISSUE_TITLE="$(jq -r '.issue.title' "$GITHUB_EVENT_PATH")"
+          ISSUE_URL="$(jq -r '.issue.html_url' "$GITHUB_EVENT_PATH")"
+          ISSUE_BODY_RAW="$(jq -r '.issue.body' "$GITHUB_EVENT_PATH")"
+          DEFAULT_BRANCH="$(jq -r '.repository.default_branch' "$GITHUB_EVENT_PATH")"
+
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
+          echo "ISSUE_TITLE=$ISSUE_TITLE" >> $GITHUB_ENV
+          echo "ISSUE_URL=$ISSUE_URL" >> $GITHUB_ENV
+          echo "ISSUE_BODY<<EOF" >> $GITHUB_ENV
+          echo "$ISSUE_BODY_RAW" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          echo "DEFAULT_BRANCH=$DEFAULT_BRANCH" >> $GITHUB_ENV
+
+      - name: Create Markdown file
         env:
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          ISSUE_TITLE: ${{ github.event.issue.title }}
-          ISSUE_URL: ${{ github.event.issue.html_url }}
-          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
+          ISSUE_TITLE: ${{ env.ISSUE_TITLE }}
+          ISSUE_BODY: ${{ env.ISSUE_BODY }}
+          ISSUE_URL: ${{ env.ISSUE_URL }}
         run: |
           set -e
-          echo "Issue number: ${ISSUE_NUMBER}"
-          echo "Issue title: ${ISSUE_TITLE}"
-          echo "Issue URL: ${ISSUE_URL}"
-
+          FILE="worksheets/issue-${ISSUE_NUMBER}.md"
+          echo "Creating file: $FILE"
           mkdir -p worksheets
-          FILE_PATH="worksheets/issue-${ISSUE_NUMBER}.md"
+          cat > "$FILE" <<EOF
+# Issue $ISSUE_NUMBER: $ISSUE_TITLE
 
-          {
-            echo "# ${ISSUE_TITLE}"
-            echo
-            echo "Printable worksheet generated from Issue #${ISSUE_NUMBER}"
-            echo "Source: ${ISSUE_URL}"
-            echo
-            echo "---"
-            echo
-            printf "%s\n" "${ISSUE_BODY}"
-          } > "$FILE_PATH"
+**Issue URL:** [$ISSUE_URL]($ISSUE_URL)
 
-          echo "Created worksheet file at: $FILE_PATH"
-          echo "=== File preview ==="
-          cat "$FILE_PATH"
+**Issue Title:** $ISSUE_TITLE  
+**Issue Number:** $ISSUE_NUMBER
 
-      - name: Commit worksheet file
-        env:
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+## Issue Body
+
+$ISSUE_BODY
+EOF
+          echo "Created worksheet file:"
+          cat "$FILE"
+
+      - name: Git status before commit
+        run: git status
+
+      - name: Configure Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit changes
+        id: commit
         run: |
           set -e
-          echo "Git status before commit:"
-          git status
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add worksheets/
-
-          # If nothing actually changed, skip commit/push
+          FILE="worksheets/issue-${ISSUE_NUMBER}.md"
+          git add "$FILE"
           if git diff --cached --quiet; then
-            echo "No changes to commit (worksheet already up to date)."
+            echo "No changes to commit."
+            echo "CHANGES_MADE=false" >> $GITHUB_ENV
             exit 0
           fi
+          git commit -m "Add worksheet for issue #$ISSUE_NUMBER"
+          echo "CHANGES_MADE=true" >> $GITHUB_ENV
 
-          git commit -m "Generate/update worksheet for issue #${ISSUE_NUMBER}"
-          echo "Committed worksheet."
-
+      - name: Push changes
+        run: |
+          set +e
           echo "Pushing to ${DEFAULT_BRANCH}..."
-          git push origin "HEAD:${DEFAULT_BRANCH}"
+          git push origin "HEAD:${DEFAULT_BRANCH}" 2>&1 | tee push.log
+          PUSH_EXIT=${PIPESTATUS[0]}
+          set -e
+          if [ $PUSH_EXIT -ne 0 ]; then
+            echo "❌ Push failed. Possibly due to protected branch."
+            cat push.log
+            exit 1
+          fi
+          echo "✅ Push succeeded."
 
-      - name: Comment with worksheet link
-        uses: actions/github-script@v7
+      - name: Comment on the issue with link to worksheet
+        if: ${{ env.CHANGES_MADE == 'true' && success() }}
+        uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const issueNumber = context.issue.number;
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const branch = context.payload.repository.default_branch;
-            const url = `https://github.com/${owner}/${repo}/blob/${branch}/worksheets/issue-${issueNumber}.md`;
+            const repoOwner = context.repo.owner;
+            const repoName = context.repo.repo;
+            const branch = process.env.DEFAULT_BRANCH;
 
-            const body = [
-              "📄 **Your printable worksheet is ready.**",
-              "",
-              "View or print it here:",
-              "",
-              url,
-              "",
-              "_This worksheet will automatically update when the issue is edited or reopened._"
-            ].join("\n");
+            const commentBody = `📝 Worksheet for this issue: [issue-${issueNumber}.md](https://github.com/${repoOwner}/${repoName}/blob/${branch}/worksheets/issue-${issueNumber}.md)`;
 
             await github.rest.issues.createComment({
-              owner,
-              repo,
+              owner: repoOwner,
+              repo: repoName,
               issue_number: issueNumber,
-              body,
+              body: commentBody
             });
