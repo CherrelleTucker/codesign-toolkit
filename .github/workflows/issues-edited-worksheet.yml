@@ -70,13 +70,13 @@ jobs:
             ISSUE_BODY_TEXT="$ISSUE_BODY"
           fi
 
-          cat > "$FILE" <<EOF
+          cat > "$FILE" << 'WORKSHEET_EOF'
 # Issue #${ISSUE_NUMBER}: ${ISSUE_TITLE}
 
-**Repository:** \`${REPO_FULL}\`  
+**Repository:** `${REPO_FULL}`  
 **Issue URL:** [${ISSUE_URL}](${ISSUE_URL})  
-**Author:** \`${ISSUE_AUTHOR}\`  
-**State:** \`${ISSUE_STATE}\`  
+**Author:** `${ISSUE_AUTHOR}`  
+**State:** `${ISSUE_STATE}`  
 **Labels:** ${ISSUE_LABELS}  
 **Assignees:** ${ISSUE_ASSIGNEES}  
 **Created:** ${ISSUE_CREATED_AT}  
@@ -134,7 +134,20 @@ ${ISSUE_BODY_TEXT}
 
 *Generated automatically from GitHub Issue #${ISSUE_NUMBER} on ${ISSUE_UPDATED_AT}.*
 
-EOF
+WORKSHEET_EOF
+
+          # Now substitute variables
+          sed -i "s/\${ISSUE_NUMBER}/${ISSUE_NUMBER}/g" "$FILE"
+          sed -i "s/\${ISSUE_TITLE}/${ISSUE_TITLE}/g" "$FILE"
+          sed -i "s/\${REPO_FULL}/${REPO_FULL}/g" "$FILE"
+          sed -i "s|\${ISSUE_URL}|${ISSUE_URL}|g" "$FILE"
+          sed -i "s/\${ISSUE_AUTHOR}/${ISSUE_AUTHOR}/g" "$FILE"
+          sed -i "s/\${ISSUE_STATE}/${ISSUE_STATE}/g" "$FILE"
+          sed -i "s/\${ISSUE_LABELS}/${ISSUE_LABELS}/g" "$FILE"
+          sed -i "s/\${ISSUE_ASSIGNEES}/${ISSUE_ASSIGNEES}/g" "$FILE"
+          sed -i "s/\${ISSUE_CREATED_AT}/${ISSUE_CREATED_AT}/g" "$FILE"
+          sed -i "s/\${ISSUE_UPDATED_AT}/${ISSUE_UPDATED_AT}/g" "$FILE"
+          sed -i "s/\${ISSUE_BODY_TEXT}/${ISSUE_BODY_TEXT}/g" "$FILE"
 
           echo "Created/Updated $FILE"
 
@@ -164,5 +177,5 @@ EOF
               owner,
               repo,
               issue_number: issueNumber,
-              body: `📝 This issue was edited. A printable worksheet has been updated at ${link}.`
+              body: `📝 A printable worksheet has been created/updated at ${link}.`
             });
