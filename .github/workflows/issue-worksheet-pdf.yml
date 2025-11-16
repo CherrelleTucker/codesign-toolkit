@@ -2,10 +2,7 @@ name: Issue Worksheet PDF
 
 on:
   issues:
-    types:
-      - opened
-      - edited
-      - reopened
+    types: [opened, edited, reopened]
 
   workflow_dispatch:
     inputs:
@@ -68,47 +65,6 @@ jobs:
               const n = issue.number;
               core.info(`Building worksheet markdown for issue #${n}`);
 
-              // --- Helper: expand <details> blocks into always-visible content ---
-              function expandDetails(md) {
-                if (!md) return md;
-
-                // Log before changes
-                core.info("Original body (first 500 chars):");
-                core.info(md.slice(0, 500));
-
-                // 1) Handle well-formed <details><summary>...</summary>...</details> blocks
-                md = md.replace(
-                  /<details[^>]*>\s*<summary>([\s\S]*?)<\/summary>([\s\S]*?)<\/details>/gi,
-                  (_match, summaryInner, contentInner) => {
-                    const summaryPlain = summaryInner.replace(/<\/?[^>]+>/g, "");
-                    const content = contentInner.trim();
-                    return `\n\n**${summaryPlain.trim()}**\n\n${content}\n\n`;
-                  }
-                );
-
-                // 2) Fallback for stray <summary>...</summary> tags
-                md = md.replace(/<summary>([\s\S]*?)<\/summary>/gi, (_match, inner) => {
-                  const plain = inner.replace(/<\/?[^>]+>/g, "");
-                  return `\n\n**${plain.trim()}**\n\n`;
-                });
-
-                // 3) Remove any remaining <details> tags
-                md = md.replace(/<details[^>]*>/gi, "");
-                md = md.replace(/<\/details>/gi, "");
-
-                // Log after changes
-                core.info("Expanded body (first 500 chars):");
-                core.info(md.slice(0, 500));
-
-                return md;
-              }
-
-              // Original issue body (markdown + HTML)
-              const originalBody = issue.body || "_No description provided._";
-
-              // Expand any <details>/<summary> sections so PDF shows everything
-              const bodyText = expandDetails(originalBody);
-
               // TEMP folder RELATIVE to /github/workspace
               const tmpDir = path.join("tmp_worksheets");
               fs.mkdirSync(tmpDir, { recursive: true });
@@ -124,6 +80,20 @@ jobs:
               const assignees = (issue.assignees || [])
                 .map(a => a.login)
                 .join(", ") || "None";
+
+              // Original issue body (markdown + HTML)
+              let bodyText = issue.body || "_No description provided._";
+
+              // ----- FLATTEN <details> BLOCKS -----
+              // Goal: no collapsed sections in the PDF.
+              // This is intentionally simple and opinionated.
+              bodyText = bodyText
+                // Mark the start/end of details blocks with horizontal rules
+                .replace(/<\s*details[^>]*>/gi, "\n\n---\n\n")
+                .replace(/<\s*\/\s*details\s*>/gi, "\n\n---\n\n")
+                // Turn <summary>Title</summary> into **Title**
+                .replace(/<\s*summary\s*>/gi, "**")
+                .replace(/<\s*\/\s*summary\s*>/gi, "**\n\n");
 
               // Build markdown content for worksheet
               const mdLines = [
@@ -161,40 +131,18 @@ jobs:
               core.setFailed(err.message || String(err));
             }
 
-      # 3. Convert the temporary Markdown → PDF
-      #    We tell the action to write the PDF into the REPO ROOT as issue-<n>.pdf
-      - name: Convert issue markdown to PDF
-        uses: baileyjm02/markdown-to-pdf@v1
+      # 3. Convert the temporary Markdown → PDF into the worksheets folder
+      #    Using md-to-pdf via Node instead of baileyjm02/markdown-to-pdf
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
-          # TEMP file created above (relative to /github/workspace)
-          input_path: ${{ steps.build_md.outputs.md-path }}
-          # Put the PDF in the repo root (.)
-          output_dir: .
-          build_html: false
-          build_pdf: true
+          node-version: "20"
 
-      # 3b. Move the generated PDF into the worksheets/ folder in the repo
-      - name: Move PDF into worksheets
+      - name: Convert issue markdown to PDF
         run: |
           mkdir -p worksheets
-          n="${{ steps.build_md.outputs.issue-number }}"
-
-          # Most likely location: repo root as issue-<n>.pdf
-          if [ -f "issue-${n}.pdf" ]; then
-            mv "issue-${n}.pdf" "worksheets/issue-${n}.pdf"
-            echo "Moved issue-${n}.pdf -> worksheets/issue-${n}.pdf"
-          # Fallback: weird concatenated name like tmp_worksheetsissue-<n>.pdf
-          elif [ -f "tmp_worksheetsissue-${n}.pdf" ]; then
-            mv "tmp_worksheetsissue-${n}.pdf" "worksheets/issue-${n}.pdf"
-            echo "Moved tmp_worksheetsissue-${n}.pdf -> worksheets/issue-${n}.pdf"
-          # Fallback: if the action ever starts respecting the folder again
-          elif [ -f "tmp_worksheets/issue-${n}.pdf" ]; then
-            mv "tmp_worksheets/issue-${n}.pdf" "worksheets/issue-${n}.pdf"
-            echo "Moved tmp_worksheets/issue-${n}.pdf -> worksheets/issue-${n}.pdf"
-          else
-            echo "Could not find generated PDF. Listing repo root and tmp_worksheets:"
-            ls -R
-          fi
+          echo "Converting ${{ steps.build_md.outputs.md-path }} to ${{ steps.build_md.outputs.pdf-path }}"
+          npx md-to-pdf "${{ steps.build_md.outputs.md-path }}" --dest "${{ steps.build_md.outputs.pdf-path }}"
 
       # 4. Commit ONLY the PDFs back to main
       - name: Commit worksheet PDF
