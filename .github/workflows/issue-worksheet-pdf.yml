@@ -2,7 +2,10 @@ name: Issue Worksheet PDF
 
 on:
   issues:
-    types: [opened, edited, reopened]
+    types:
+      - opened
+      - edited
+      - reopened
 
   workflow_dispatch:
     inputs:
@@ -65,6 +68,25 @@ jobs:
               const n = issue.number;
               core.info(`Building worksheet markdown for issue #${n}`);
 
+              // --- Helper: expand <details> blocks into always-visible content ---
+              function expandDetails(md) {
+                if (!md) return md;
+
+                return md
+                  // Turn <summary>Title</summary> into a bold line
+                  .replace(/<summary>([\s\S]*?)<\/summary>/gi, "\n\n**$1**\n\n")
+                  // Remove any <details ...> opening tag
+                  .replace(/<details[^>]*>/gi, "")
+                  // Remove closing </details>
+                  .replace(/<\/details>/gi, "");
+              }
+
+              // Original issue body (markdown + HTML)
+              let bodyText = issue.body || "_No description provided._";
+
+              // Expand any <details>/<summary> sections so PDF shows everything
+              bodyText = expandDetails(bodyText);
+
               // TEMP folder RELATIVE to /github/workspace
               const tmpDir = path.join("tmp_worksheets");
               fs.mkdirSync(tmpDir, { recursive: true });
@@ -80,9 +102,6 @@ jobs:
               const assignees = (issue.assignees || [])
                 .map(a => a.login)
                 .join(", ") || "None";
-
-              // Original issue body (markdown + HTML)
-              const bodyText = issue.body || "_No description provided._";
 
               // Build markdown content for worksheet
               const mdLines = [
