@@ -70,23 +70,23 @@ jobs:
             ISSUE_BODY_TEXT="$ISSUE_BODY"
           fi
 
-          cat <<EOF > "$FILE"
-# Issue #${ISSUE_NUMBER}: ${ISSUE_TITLE}
+          cat <<'EOF_MARKER' > "$FILE"
+# Issue #ISSUE_NUM_PLACEHOLDER: ISSUE_TITLE_PLACEHOLDER
 
-**Repository:** \`${REPO_FULL}\`
-**Issue URL:** [${ISSUE_URL}](${ISSUE_URL})
-**Author:** \`${ISSUE_AUTHOR}\`
-**State:** \`${ISSUE_STATE}\`
-**Labels:** ${ISSUE_LABELS}
-**Assignees:** ${ISSUE_ASSIGNEES}
-**Created:** ${ISSUE_CREATED_AT}
-**Last Updated:** ${ISSUE_UPDATED_AT}
+**Repository:** `REPO_FULL_PLACEHOLDER`
+**Issue URL:** [ISSUE_URL_PLACEHOLDER](ISSUE_URL_PLACEHOLDER)
+**Author:** `ISSUE_AUTHOR_PLACEHOLDER`
+**State:** `ISSUE_STATE_PLACEHOLDER`
+**Labels:** ISSUE_LABELS_PLACEHOLDER
+**Assignees:** ISSUE_ASSIGNEES_PLACEHOLDER
+**Created:** ISSUE_CREATED_AT_PLACEHOLDER
+**Last Updated:** ISSUE_UPDATED_AT_PLACEHOLDER
 
 ---
 
 ## Original Issue Description
 
-${ISSUE_BODY_TEXT}
+ISSUE_BODY_TEXT_PLACEHOLDER
 
 ---
 
@@ -132,8 +132,21 @@ ${ISSUE_BODY_TEXT}
 
 ---
 
-*Generated automatically from GitHub Issue #${ISSUE_NUMBER} on ${ISSUE_UPDATED_AT}.*
-EOF
+*Generated automatically from GitHub Issue #ISSUE_NUM_PLACEHOLDER on ISSUE_UPDATED_AT_PLACEHOLDER.*
+EOF_MARKER
+
+          # Now replace all placeholders with actual values
+          sed -i "s|ISSUE_NUM_PLACEHOLDER|${ISSUE_NUMBER}|g" "$FILE"
+          sed -i "s|ISSUE_TITLE_PLACEHOLDER|${ISSUE_TITLE}|g" "$FILE"
+          sed -i "s|REPO_FULL_PLACEHOLDER|${REPO_FULL}|g" "$FILE"
+          sed -i "s|ISSUE_URL_PLACEHOLDER|${ISSUE_URL}|g" "$FILE"
+          sed -i "s|ISSUE_AUTHOR_PLACEHOLDER|${ISSUE_AUTHOR}|g" "$FILE"
+          sed -i "s|ISSUE_STATE_PLACEHOLDER|${ISSUE_STATE}|g" "$FILE"
+          sed -i "s|ISSUE_LABELS_PLACEHOLDER|${ISSUE_LABELS}|g" "$FILE"
+          sed -i "s|ISSUE_ASSIGNEES_PLACEHOLDER|${ISSUE_ASSIGNEES}|g" "$FILE"
+          sed -i "s|ISSUE_CREATED_AT_PLACEHOLDER|${ISSUE_CREATED_AT}|g" "$FILE"
+          sed -i "s|ISSUE_UPDATED_AT_PLACEHOLDER|${ISSUE_UPDATED_AT}|g" "$FILE"
+          sed -i "s|ISSUE_BODY_TEXT_PLACEHOLDER|${ISSUE_BODY_TEXT}|g" "$FILE"
 
           echo "Created/Updated $FILE"
 
