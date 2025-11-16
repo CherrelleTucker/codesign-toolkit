@@ -2,7 +2,7 @@ name: Issue Edited Worksheet
 
 on:
   issues:
-    types: [opened, edited]  # Add 'opened' for testing too
+    types: [opened, edited]
 
 permissions:
   contents: write
@@ -25,4 +25,144 @@ jobs:
           cat "$GITHUB_EVENT_PATH" | jq '.'
           echo "===================================================="
 
-      # ... rest of your workflow
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Build printable worksheet markdown
+        run: |
+          # Basic fields from event payload
+          ISSUE_NUMBER="$(jq -r '.issue.number'        "$GITHUB_EVENT_PATH")"
+          ISSUE_TITLE="$(jq -r '.issue.title'         "$GITHUB_EVENT_PATH")"
+          ISSUE_BODY="$(jq -r '.issue.body // ""'     "$GITHUB_EVENT_PATH")"
+          ISSUE_URL="$(jq -r '.issue.html_url'        "$GITHUB_EVENT_PATH")"
+          ISSUE_STATE="$(jq -r '.issue.state'         "$GITHUB_EVENT_PATH")"
+          ISSUE_CREATED_AT="$(jq -r '.issue.created_at' "$GITHUB_EVENT_PATH")"
+          ISSUE_UPDATED_AT="$(jq -r '.issue.updated_at' "$GITHUB_EVENT_PATH")"
+          ISSUE_AUTHOR="$(jq -r '.issue.user.login'   "$GITHUB_EVENT_PATH")"
+
+          # Labels (comma-separated)
+          ISSUE_LABELS="$(jq -r '
+            if .issue.labels and (.issue.labels | length > 0)
+            then [.issue.labels[].name] | join(", ")
+            else "None"
+            end
+          ' "$GITHUB_EVENT_PATH")"
+
+          # Assignees (comma-separated)
+          ISSUE_ASSIGNEES="$(jq -r '
+            if .issue.assignees and (.issue.assignees | length > 0)
+            then [.issue.assignees[].login] | join(", ")
+            else "None"
+            end
+          ' "$GITHUB_EVENT_PATH")"
+
+          REPO_FULL="$GITHUB_REPOSITORY"
+
+          mkdir -p worksheets
+          FILE="worksheets/issue-${ISSUE_NUMBER}-worksheet.md"
+
+          # If body is empty, give a friendly placeholder
+          if [ -z "$ISSUE_BODY" ] || [ "$ISSUE_BODY" = "null" ]; then
+            ISSUE_BODY_TEXT="(No issue body provided.)"
+          else
+            ISSUE_BODY_TEXT="$ISSUE_BODY"
+          fi
+
+          cat > "$FILE" <<EOF
+# Issue #${ISSUE_NUMBER}: ${ISSUE_TITLE}
+
+**Repository:** \`${REPO_FULL}\`  
+**Issue URL:** [${ISSUE_URL}](${ISSUE_URL})  
+**Author:** \`${ISSUE_AUTHOR}\`  
+**State:** \`${ISSUE_STATE}\`  
+**Labels:** ${ISSUE_LABELS}  
+**Assignees:** ${ISSUE_ASSIGNEES}  
+**Created:** ${ISSUE_CREATED_AT}  
+**Last Updated:** ${ISSUE_UPDATED_AT}  
+
+---
+
+## Original Issue Description
+
+${ISSUE_BODY_TEXT}
+
+---
+
+## Printable Worksheet
+
+> Use the sections below to capture the current understanding of this issue, decisions, and next steps. This page is designed to be printable.
+
+### 1. Summary / Problem Statement
+
+-  
+
+### 2. Context & Background
+
+-  
+
+### 3. Stakeholders / Owners
+
+- Primary owner:
+- Other stakeholders:
+
+### 4. Requirements / Acceptance Criteria
+
+- [ ]  
+- [ ]  
+
+### 5. Constraints & Assumptions
+
+-  
+
+### 6. Risks / Open Questions
+
+-  
+
+### 7. Implementation Notes
+
+-  
+
+### 8. Next Actions
+
+- [ ] Action:
+  - Owner:
+  - Due date:
+
+---
+
+*Generated automatically from GitHub Issue #${ISSUE_NUMBER} on ${ISSUE_UPDATED_AT}.*
+
+EOF
+
+          echo "Created/Updated $FILE"
+
+      - name: Commit worksheet
+        run: |
+          ISSUE_NUMBER="${{ github.event.issue.number }}"
+          FILE="worksheets/issue-${ISSUE_NUMBER}-worksheet.md"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add "$FILE"
+          git commit -m "Update worksheet for issue #${ISSUE_NUMBER}" || echo "No changes to commit"
+          git push || echo "No changes pushed"
+
+      - name: Comment on issue with worksheet location
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const { owner, repo } = context.repo;
+            const issueNumber = context.issue.number;
+            const filePath = `worksheets/issue-${issueNumber}-worksheet.md`;
+            const link = `\`${filePath}\``;
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              body: `📝 This issue was edited. A printable worksheet has been updated at ${link}.`
+            });
