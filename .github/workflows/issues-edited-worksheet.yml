@@ -19,56 +19,45 @@ jobs:
           persist-credentials: true
 
       - name: Build printable worksheet markdown
-        env:
-          ISSUE_NUMBER: ${{ github.event.issue.number }}
-          ISSUE_TITLE: ${{ github.event.issue.title }}
-          ISSUE_BODY: ${{ github.event.issue.body }}
-          ISSUE_URL: ${{ github.event.issue.html_url }}
-          ISSUE_STATE: ${{ github.event.issue.state }}
-          ISSUE_CREATED_AT: ${{ github.event.issue.created_at }}
-          ISSUE_UPDATED_AT: ${{ github.event.issue.updated_at }}
-          ISSUE_AUTHOR: ${{ github.event.issue.user.login }}
-          REPO_FULL: ${{ github.repository }}
         run: |
-          mkdir -p worksheets
-          FILE="worksheets/issue-${ISSUE_NUMBER}-worksheet.md"
+          node <<'NODE'
+          const fs = require('fs');
+          const path = require('path');
 
-          # Get labels as comma-separated string
-          ISSUE_LABELS="${{ join(github.event.issue.labels.*.name, ', ') }}"
-          if [ -z "$ISSUE_LABELS" ]; then
-            ISSUE_LABELS="None"
-          fi
+          const event = JSON.parse(fs.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
+          const issue = event.issue || {};
+          const repoFull = process.env.GITHUB_REPOSITORY || 'unknown/repo';
 
-          # Get assignees as comma-separated string
-          ISSUE_ASSIGNEES="${{ join(github.event.issue.assignees.*.login, ', ') }}"
-          if [ -z "$ISSUE_ASSIGNEES" ]; then
-            ISSUE_ASSIGNEES="None"
-          fi
+          const listText = (items, key) => {
+            if (!Array.isArray(items) || items.length === 0) return 'None';
+            const values = items
+              .map(item => (key ? item?.[key] : item))
+              .map(val => (typeof val === 'string' ? val.trim() : ''))
+              .filter(Boolean);
+            return values.length ? values.join(', ') : 'None';
+          };
 
-          # If body is empty, give a friendly placeholder
-          if [ -z "$ISSUE_BODY" ]; then
-            ISSUE_BODY_TEXT="(No issue body provided.)"
-          else
-            ISSUE_BODY_TEXT="$ISSUE_BODY"
-          fi
+          const labels = listText(issue.labels, 'name');
+          const assignees = listText(issue.assignees, 'login');
+          const body = (issue.body && issue.body.trim()) ? issue.body : '(No issue body provided.)';
 
-          cat <<'EOF_MARKER' > "$FILE"
-# Issue #ISSUE_NUM_PLACEHOLDER: ISSUE_TITLE_PLACEHOLDER
+          const filePath = path.join('worksheets', `issue-${issue.number}-worksheet.md`);
+          const content = `# Issue #${issue.number}: ${issue.title}
 
-**Repository:** `REPO_FULL_PLACEHOLDER`
-**Issue URL:** [ISSUE_URL_PLACEHOLDER](ISSUE_URL_PLACEHOLDER)
-**Author:** `ISSUE_AUTHOR_PLACEHOLDER`
-**State:** `ISSUE_STATE_PLACEHOLDER`
-**Labels:** ISSUE_LABELS_PLACEHOLDER
-**Assignees:** ISSUE_ASSIGNEES_PLACEHOLDER
-**Created:** ISSUE_CREATED_AT_PLACEHOLDER
-**Last Updated:** ISSUE_UPDATED_AT_PLACEHOLDER
+**Repository:** \`${repoFull}\`  
+**Issue URL:** [${issue.html_url}](${issue.html_url})  
+**Author:** \`${issue.user?.login || 'unknown'}\`  
+**State:** \`${issue.state}\`  
+**Labels:** ${labels}  
+**Assignees:** ${assignees}  
+**Created:** ${issue.created_at}  
+**Last Updated:** ${issue.updated_at}  
 
 ---
 
 ## Original Issue Description
 
-ISSUE_BODY_TEXT_PLACEHOLDER
+${body}
 
 ---
 
@@ -78,11 +67,11 @@ ISSUE_BODY_TEXT_PLACEHOLDER
 
 ### 1. Summary / Problem Statement
 
--
+-  
 
 ### 2. Context & Background
 
--
+-  
 
 ### 3. Stakeholders / Owners
 
@@ -91,20 +80,20 @@ ISSUE_BODY_TEXT_PLACEHOLDER
 
 ### 4. Requirements / Acceptance Criteria
 
-- [ ]
-- [ ]
+- [ ]  
+- [ ]  
 
 ### 5. Constraints & Assumptions
 
--
+-  
 
 ### 6. Risks / Open Questions
 
--
+-  
 
 ### 7. Implementation Notes
 
--
+-  
 
 ### 8. Next Actions
 
@@ -114,23 +103,13 @@ ISSUE_BODY_TEXT_PLACEHOLDER
 
 ---
 
-*Generated automatically from GitHub Issue #ISSUE_NUM_PLACEHOLDER on ISSUE_UPDATED_AT_PLACEHOLDER.*
-EOF_MARKER
+*Generated automatically from GitHub Issue #${issue.number} on ${issue.updated_at}.*
+`;
 
-          # Now replace all placeholders with actual values
-          sed -i "s|ISSUE_NUM_PLACEHOLDER|${ISSUE_NUMBER}|g" "$FILE"
-          sed -i "s|ISSUE_TITLE_PLACEHOLDER|${ISSUE_TITLE}|g" "$FILE"
-          sed -i "s|REPO_FULL_PLACEHOLDER|${REPO_FULL}|g" "$FILE"
-          sed -i "s|ISSUE_URL_PLACEHOLDER|${ISSUE_URL}|g" "$FILE"
-          sed -i "s|ISSUE_AUTHOR_PLACEHOLDER|${ISSUE_AUTHOR}|g" "$FILE"
-          sed -i "s|ISSUE_STATE_PLACEHOLDER|${ISSUE_STATE}|g" "$FILE"
-          sed -i "s|ISSUE_LABELS_PLACEHOLDER|${ISSUE_LABELS}|g" "$FILE"
-          sed -i "s|ISSUE_ASSIGNEES_PLACEHOLDER|${ISSUE_ASSIGNEES}|g" "$FILE"
-          sed -i "s|ISSUE_CREATED_AT_PLACEHOLDER|${ISSUE_CREATED_AT}|g" "$FILE"
-          sed -i "s|ISSUE_UPDATED_AT_PLACEHOLDER|${ISSUE_UPDATED_AT}|g" "$FILE"
-          sed -i "s|ISSUE_BODY_TEXT_PLACEHOLDER|${ISSUE_BODY_TEXT}|g" "$FILE"
-
-          echo "Created/Updated $FILE"
+          fs.mkdirSync('worksheets', { recursive: true });
+          fs.writeFileSync(filePath, content, 'utf8');
+          console.log(`Created/Updated ${filePath}`);
+          NODE
 
       - name: Install markdown-pdf tool
         run: |
@@ -144,46 +123,37 @@ EOF_MARKER
           HTML_FILE="worksheets/issue-${ISSUE_NUMBER}-worksheet.html"
           PDF_FILE="worksheets/issue-${ISSUE_NUMBER}-worksheet.pdf"
 
-          # First convert markdown to HTML with better styling
-          pandoc "$MD_FILE" \
-            -o "$HTML_FILE" \
-            --standalone \
-            --css=https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown.min.css \
-            --metadata title="Issue #${ISSUE_NUMBER}"
-
-          # Add some inline styles for better PDF rendering
-          cat > /tmp/header.html <<'HEADER_EOF'
-          <!DOCTYPE html>
-          <html>
-          <head>
-          <meta charset="UTF-8">
-          <style>
-          body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: #24292e;
-            max-width: 980px;
-            margin: 0 auto;
-            padding: 45px;
-          }
-          h1 { color: #24292e; border-bottom: 1px solid #e1e4e8; padding-bottom: 0.3em; }
-          h2 { border-bottom: 1px solid #e1e4e8; padding-bottom: 0.3em; }
-          code { background-color: #f6f8fa; padding: 0.2em 0.4em; border-radius: 3px; }
-          pre { background-color: #f6f8fa; padding: 16px; border-radius: 6px; overflow: auto; }
-          blockquote { border-left: 4px solid #dfe2e5; padding-left: 16px; color: #6a737d; }
-          a { color: #0366d6; text-decoration: none; }
-          table { border-collapse: collapse; width: 100%; }
-          th, td { border: 1px solid #dfe2e5; padding: 6px 13px; }
-          @media print {
-            body { margin: 0; padding: 20px; }
-          }
-          </style>
-          </head>
-          <body>
-          HEADER_EOF
-
           # Create a styled HTML file
-          cat /tmp/header.html > "$HTML_FILE"
+          cat > "$HTML_FILE" <<'HTML_EOF'
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  color: #24292e;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 45px;
+}
+h1 { color: #24292e; border-bottom: 1px solid #e1e4e8; padding-bottom: 0.3em; }
+h2 { border-bottom: 1px solid #e1e4e8; padding-bottom: 0.3em; }
+code { background-color: #f6f8fa; padding: 0.2em 0.4em; border-radius: 3px; }
+pre { background-color: #f6f8fa; padding: 16px; border-radius: 6px; overflow: auto; }
+blockquote { border-left: 4px solid #dfe2e5; padding-left: 16px; color: #6a737d; }
+a { color: #0366d6; text-decoration: none; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #dfe2e5; padding: 6px 13px; }
+@media print {
+  body { margin: 0; padding: 20px; }
+}
+</style>
+</head>
+<body>
+HTML_EOF
+
           pandoc "$MD_FILE" -t html >> "$HTML_FILE"
           echo "</body></html>" >> "$HTML_FILE"
 
@@ -223,13 +193,14 @@ EOF_MARKER
           path: worksheets/issue-${{ github.event.issue.number }}-worksheet.pdf
           retention-days: 90
 
-      - name: Comment on issue with PDF location
+      - name: Comment on issue with worksheet location
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
             const issueNumber = context.issue.number;
+            const mdPath = `worksheets/issue-${issueNumber}-worksheet.md`;
             const pdfPath = `worksheets/issue-${issueNumber}-worksheet.pdf`;
             const runId = context.runId;
             const artifactUrl = `https://github.com/${owner}/${repo}/actions/runs/${runId}`;
@@ -240,3 +211,5 @@ EOF_MARKER
               issue_number: issueNumber,
               body: `📄 Issue card PDF generated!\n\n- **PDF:** [\`${pdfPath}\`](https://github.com/${owner}/${repo}/blob/main/${pdfPath})\n- **Download:** [Artifact from workflow run](${artifactUrl})`
             });
+
+
