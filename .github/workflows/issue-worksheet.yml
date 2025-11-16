@@ -3,7 +3,6 @@ name: Generate Printable Worksheet
 on:
   issues:
     types: [opened, edited, reopened]
-  workflow_dispatch:
 
 permissions:
   contents: write
@@ -65,7 +64,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
-          comment-identifier: worksheet-link
           body: |
             📄 **Your printable worksheet is ready.**
 
