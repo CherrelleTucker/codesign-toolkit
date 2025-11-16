@@ -39,15 +39,6 @@ jobs:
           with open(f"worksheets/issue-{issue['number']}-worksheet.md", 'w') as f:
               f.write(f"""# Issue #{issue['number']}: {issue['title']}
 
-**Repository:** `{repo}`
-**Issue URL:** [{issue['html_url']}]({issue['html_url']})
-**Author:** `{issue['user']['login']}`
-**State:** `{issue['state']}`
-**Labels:** {labels}
-**Assignees:** {assignees}
-**Created:** {issue['created_at']}
-**Last Updated:** {issue['updated_at']}
-
 ---
 
 ## Original Issue Description
