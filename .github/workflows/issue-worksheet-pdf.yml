@@ -20,14 +20,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Pull the repo so we can write worksheets into it
+      # 1. Pull the repo so we can store PDFs into it
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: main   # change if your default branch is not main
 
-      # 2. Build the worksheet markdown file from issue data
-      - name: Build worksheet markdown
+      # 2. Build a TEMPORARY markdown file from the issue data
+      #    (this file is NOT in the repo and will NOT be committed)
+      - name: Build temporary worksheet markdown
         id: build_md
         uses: actions/github-script@v7
         with:
@@ -59,12 +60,12 @@ jobs:
 
             const n = issue.number;
 
-            // Prepare folder
-            const dir = path.join("codesign-toolkit", "worksheets");
-            fs.mkdirSync(dir, { recursive: true });
+            // TEMP folder inside the Actions workspace (not part of repo)
+            const tmpDir = path.join(process.cwd(), "tmp_worksheets");
+            fs.mkdirSync(tmpDir, { recursive: true });
 
             const mdFilename = `issue-${n}.md`;
-            const mdPath = path.join(dir, mdFilename);
+            const mdPath = path.join(tmpDir, mdFilename);
 
             // Build metadata
             const labels = (issue.labels || [])
@@ -96,30 +97,37 @@ jobs:
               ""
             ].join("\n");
 
-            // Write file
+            // Write TEMP file (not tracked by git)
             fs.writeFileSync(mdPath, md, "utf8");
 
-            // Outputs for later steps
+            // Final PDF will live in repo at: worksheets/issue-<n>.pdf
+            const pdfPath = path.join("worksheets", `issue-${n}.pdf`);
+
             core.setOutput("issue-number", String(n));
             core.setOutput("md-path", mdPath);
-            core.setOutput("pdf-path", mdPath.replace(/\.md$/, ".pdf"));
+            core.setOutput("pdf-path", pdfPath);
 
-      # 3. Convert Markdown → PDF
-      - name: Convert worksheet to PDF
+      # 3. Convert the temporary Markdown → PDF into the worksheets folder
+      - name: Convert issue markdown to PDF
         uses: baileyjm02/markdown-to-pdf@v1
         with:
+          # TEMP file created above
           input_path: ${{ steps.build_md.outputs.md-path }}
-          output_dir: codesign-toolkit/worksheets
+          # PDF output folder INSIDE the repo
+          output_dir: worksheets
           build_html: false
           build_pdf: true
 
-      # 4. Commit the updated markdown + PDF back to main
-      - name: Commit worksheet & PDF
+      # 4. Commit ONLY the PDFs back to main
+      - name: Commit worksheet PDF
         run: |
+          mkdir -p worksheets
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add codesign-toolkit/worksheets
+          # Add only PDFs (no markdown)
+          git add worksheets/*.pdf 2>/dev/null || echo "No PDFs to add"
 
           if git diff --cached --quiet; then
             echo "No changes to commit."
@@ -141,7 +149,7 @@ jobs:
             const repo = context.repo.repo;
             const issueNumber = Number(process.env.ISSUE_NUMBER);
             const pdfPath = process.env.PDF_PATH.replace(/^\.?\/?/, "");
-            const branch = "main";
+            const branch = "main";  // change if your default branch is not main
 
             const url = `https://github.com/${owner}/${repo}/blob/${branch}/${pdfPath}?raw=1`;
 
