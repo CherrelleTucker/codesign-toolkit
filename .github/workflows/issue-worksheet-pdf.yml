@@ -20,13 +20,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Check out the repo so we can store PDFs into it
+      # 1. Pull the repo so we can store PDFs into it
       - name: Check out repository
         uses: actions/checkout@v4
         with:
           ref: main   # change if your default branch is not main
 
       # 2. Build a TEMPORARY markdown file from the issue data
+      #    (this file is NOT in the repo and will NOT be committed)
       - name: Build temporary worksheet markdown
         id: build_md
         uses: actions/github-script@v7
@@ -36,35 +37,30 @@ jobs:
             const fs = require("fs");
             const path = require("path");
 
-            // Turn <details><summary>Title</summary>Content</details>
-            // into plain markdown sections so nothing is hidden.
+            // Expand <details><summary>...</summary> ... </details>
+            // into plain, always-visible markdown
             function expandDetails(html) {
-              if (!html) return html;
-              return html.replace(
-                /<details\b[^>]*>([\s\S]*?)<\/details>/gi,
-                (match, inner) => {
-                  const summaryMatch = inner.match(
-                    /<summary\b[^>]*>([\s\S]*?)<\/summary>/i
-                  );
-                  let summaryText = "";
-                  let rest = inner;
+              if (!html) return "";
+              return html.replace(/<details>([\s\S]*?)<\/details>/gi, (match, inner) => {
+                const summaryMatch = inner.match(/<summary>([\s\S]*?)<\/summary>/i);
+                let summary = "";
+                let rest = inner;
 
-                  if (summaryMatch) {
-                    summaryText = summaryMatch[1]
-                      // strip any inline HTML that might be in the summary
-                      .replace(/<\/?[^>]+>/g, "")
-                      .trim();
-                    // everything after </summary> becomes the body
-                    rest = inner.slice(summaryMatch[0].length);
-                  }
-
-                  const header = summaryText
-                    ? `\n\n### ${summaryText}\n\n`
-                    : `\n\n`;
-
-                  return `${header}${rest}`;
+                if (summaryMatch) {
+                  // Clean summary of any HTML tags
+                  summary = summaryMatch[1]
+                    .replace(/<\/?[^>]+>/g, "")
+                    .trim();
+                  // Everything after </summary> is the "body" content
+                  rest = inner.slice(summaryMatch.index + summaryMatch[0].length);
                 }
-              );
+
+                // Strip the first <br> after summary if present
+                rest = rest.replace(/^\s*<br\s*\/?>\s*/i, "");
+
+                // Return expanded block as markdown
+                return `\n\n**${summary || "Details"}**\n\n${rest.trim()}\n\n`;
+              });
             }
 
             try {
@@ -102,7 +98,7 @@ jobs:
               const mdFilename = `issue-${n}.md`;
               const mdPath = path.join(tmpDir, mdFilename);
 
-              // Build metadata
+              // Metadata
               const labels = (issue.labels || [])
                 .map(l => (typeof l === "string" ? l : l.name))
                 .join(", ") || "None";
@@ -111,16 +107,11 @@ jobs:
                 .map(a => a.login)
                 .join(", ") || "None";
 
-              // Original issue body (markdown + HTML)
               const rawBody = issue.body || "_No description provided._";
-
-              // Expand collapsed sections so the PDF shows everything
               const bodyText = expandDetails(rawBody);
+              const updated = issue.updated_at || issue.created_at;
 
-              // Simple version line with generation timestamp
-              const now = new Date().toISOString();
-
-              // Build markdown content for worksheet
+              // Markdown content for worksheet
               const mdLines = [
                 `# Issue #${n}: ${issue.title}`,
                 "",
@@ -133,7 +124,7 @@ jobs:
                 `**Created:** ${issue.created_at}`,
                 `**Updated:** ${issue.updated_at}`,
                 "",
-                `> Worksheet version generated: ${now}`,
+                `**Worksheet version:** ${updated}`,
                 "",
                 "---",
                 "",
@@ -159,16 +150,20 @@ jobs:
             }
 
       # 3. Convert the temporary Markdown → PDF into the worksheets folder
-      - name: Convert markdown to PDF
-        run: |
-          set -e
-          mkdir -p worksheets
-          echo "Converting ${{ steps.build_md.outputs.md-path }} to ${{ steps.build_md.outputs.pdf-path }}"
-          npx md-to-pdf "${{ steps.build_md.outputs.md-path }}" "${{ steps.build_md.outputs.pdf-path }}"
+      #    using the Marketplace Action: BaileyJM02/markdown-to-pdf
+      - name: Convert worksheet markdown to PDF
+        uses: BaileyJM02/markdown-to-pdf@v1
+        with:
+          # Convert all .md files in tmp_worksheets
+          input_dir: tmp_worksheets
+          # PDF output folder INSIDE the repo
+          output_dir: worksheets
 
       # 4. Commit ONLY the PDFs back to main
       - name: Commit worksheet PDF
         run: |
+          mkdir -p worksheets
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
