@@ -3,6 +3,7 @@ name: Issue Worksheet
 on:
   issues:
     types: [opened, edited, reopened]
+    workflow_dispatch:
 
 permissions:
   contents: write
