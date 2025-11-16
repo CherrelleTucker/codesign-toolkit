@@ -44,14 +44,14 @@ jobs:
           const filePath = path.join('worksheets', `issue-${issue.number}-worksheet.md`);
           const content = `# Issue #${issue.number}: ${issue.title}
 
-**Repository:** \`${repoFull}\`  
-**Issue URL:** [${issue.html_url}](${issue.html_url})  
-**Author:** \`${issue.user?.login || 'unknown'}\`  
-**State:** \`${issue.state}\`  
-**Labels:** ${labels}  
-**Assignees:** ${assignees}  
-**Created:** ${issue.created_at}  
-**Last Updated:** ${issue.updated_at}  
+**Repository:** \`${repoFull}\`
+**Issue URL:** [${issue.html_url}](${issue.html_url})
+**Author:** \`${issue.user?.login || 'unknown'}\`
+**State:** \`${issue.state}\`
+**Labels:** ${labels}
+**Assignees:** ${assignees}
+**Created:** ${issue.created_at}
+**Last Updated:** ${issue.updated_at}
 
 ---
 
@@ -67,11 +67,11 @@ ${body}
 
 ### 1. Summary / Problem Statement
 
--  
+-
 
 ### 2. Context & Background
 
--  
+-
 
 ### 3. Stakeholders / Owners
 
@@ -80,20 +80,20 @@ ${body}
 
 ### 4. Requirements / Acceptance Criteria
 
-- [ ]  
-- [ ]  
+- [ ]
+- [ ]
 
 ### 5. Constraints & Assumptions
 
--  
+-
 
 ### 6. Risks / Open Questions
 
--  
+-
 
 ### 7. Implementation Notes
 
--  
+-
 
 ### 8. Next Actions
 
@@ -137,14 +137,13 @@ ${body}
           path: worksheets/issue-${{ github.event.issue.number }}-worksheet.pdf
           retention-days: 90
 
-      - name: Comment on issue with worksheet location
+      - name: Comment on issue with PDF location
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
             const issueNumber = context.issue.number;
-            const mdPath = `worksheets/issue-${issueNumber}-worksheet.md`;
             const pdfPath = `worksheets/issue-${issueNumber}-worksheet.pdf`;
             const runId = context.runId;
             const artifactUrl = `https://github.com/${owner}/${repo}/actions/runs/${runId}`;
@@ -155,5 +154,6 @@ ${body}
               issue_number: issueNumber,
               body: `📄 Issue card PDF generated!\n\n- **PDF:** [\`${pdfPath}\`](https://github.com/${owner}/${repo}/blob/main/${pdfPath})\n- **Download:** [Artifact from workflow run](${artifactUrl})`
             });
+
 
 
