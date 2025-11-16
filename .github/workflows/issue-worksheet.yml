@@ -1,5 +1,4 @@
-# .github/workflows/issue-auto-smoke-test.yml
-name: Issue Auto Smoke Test
+name: Issue Trigger Test
 
 on:
   issues:
@@ -7,13 +6,144 @@ on:
       - opened
       - edited
       - reopened
+  workflow_dispatch:
+    inputs:
+      issue-number:
+        description: 'Issue number to process when run manually (optional)'
+        required: false
+        type: number
+
+permissions:
+  contents: write
+  issues: write
 
 jobs:
-  log-event:
+  test-trigger:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Print event info
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Debug event
         run: |
           echo "Event name: $GITHUB_EVENT_NAME"
-          echo "Issue number: ${{ github.event.issue.number }}"
-          echo "Issue title:  ${{ github.event.issue.title }}"
+          echo "Raw event payload:"
+          cat "$GITHUB_EVENT_PATH"
+
+      - name: Determine issue metadata (auto + manual)
+        run: |
+          echo "Determining issue metadata..."
+          echo "Event: $GITHUB_EVENT_NAME"
+
+          ISSUE_NUMBER=""
+          ISSUE_TITLE=""
+          ISSUE_BODY=""
+
+          if [ "$GITHUB_EVENT_NAME" = "issues" ]; then
+            echo "Reading from issues payload using jq..."
+            ISSUE_NUMBER="$(jq -r '.issue.number' "$GITHUB_EVENT_PATH")"
+            ISSUE_TITLE="$(jq -r '.issue.title' "$GITHUB_EVENT_PATH")"
+            ISSUE_BODY="$(jq -r '.issue.body // ""' "$GITHUB_EVENT_PATH")"
+          elif [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "Reading from workflow_dispatch inputs..."
+            ISSUE_NUMBER="${{ github.event.inputs.issue-number }}"
+            if [ -n "$ISSUE_NUMBER" ]; then
+              ISSUE_TITLE="Manual run for issue #$ISSUE_NUMBER"
+              ISSUE_BODY="Triggered via workflow_dispatch for issue #$ISSUE_NUMBER."
+            else
+              ISSUE_TITLE="Manual run"
+              ISSUE_BODY="Triggered via workflow_dispatch with no specific issue number."
+            fi
+          else
+            echo "Unsupported event: $GITHUB_EVENT_NAME"
+          fi
+
+          echo "Resolved ISSUE_NUMBER: $ISSUE_NUMBER"
+          echo "Resolved ISSUE_TITLE: $ISSUE_TITLE"
+          echo "Resolved ISSUE_BODY (first 200 chars):"
+          printf '%s\n' "$ISSUE_BODY" | head -c 200 || true
+          echo ""
+
+          # Export to GITHUB_ENV so later steps can use them
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
+          echo "ISSUE_TITLE=$ISSUE_TITLE" >> $GITHUB_ENV
+          {
+            echo 'ISSUE_BODY<<EOF'
+            printf '%s\n' "$ISSUE_BODY"
+            echo 'EOF'
+          } >> $GITHUB_ENV
+
+      - name: Show resolved env
+        run: |
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER"
+          echo "ISSUE_TITLE=$ISSUE_TITLE"
+          echo "ISSUE_BODY (first 200 chars):"
+          printf '%s\n' "$ISSUE_BODY" | head -c 200 || true
+        env:
+          ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
+          ISSUE_TITLE: ${{ env.ISSUE_TITLE }}
+          ISSUE_BODY: ${{ env.ISSUE_BODY }}
+
+      - name: Write test markdown
+        run: |
+          mkdir -p worksheets
+
+          # If we don't have a number, use 'manual' as the suffix
+          SUFFIX="${ISSUE_NUMBER:-manual}"
+          FILE="worksheets/test-${SUFFIX}.md"
+
+          {
+            echo "# Issue ${ISSUE_NUMBER:-manual}: ${ISSUE_TITLE:-Manual run}"
+            echo ""
+            echo "## Body"
+            if [ -n "$ISSUE_BODY" ]; then
+              printf '%s\n' "$ISSUE_BODY"
+            else
+              echo "(No issue body available for this run.)"
+            fi
+          } > "$FILE"
+
+          echo "Created $FILE"
+        env:
+          ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
+          ISSUE_TITLE: ${{ env.ISSUE_TITLE }}
+          ISSUE_BODY: ${{ env.ISSUE_BODY }}
+
+      - name: Commit worksheet (if issue number present)
+        if: env.ISSUE_NUMBER != ''
+        run: |
+          FILE="worksheets/test-${ISSUE_NUMBER}.md"
+
+          echo "Preparing to commit $FILE"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add "$FILE"
+          git commit -m "Add worksheet for issue #${ISSUE_NUMBER}" || echo "No changes to commit"
+          git push || echo "No changes pushed"
+        env:
+          ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
+
+      - name: Comment on issue (only if we have an issue number)
+        if: env.ISSUE_NUMBER != ''
+        uses: actions/github-script@v6
+        env:
+          ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issueNumber = Number(process.env.ISSUE_NUMBER);
+            const { owner, repo } = context.repo;
+
+            core.info(`Commenting on issue #${issueNumber} in ${owner}/${repo}`);
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number: issueNumber,
+              body: `✅ Test passed! Markdown file created and committed at \`worksheets/test-${issueNumber}.md\`.`
+            });
