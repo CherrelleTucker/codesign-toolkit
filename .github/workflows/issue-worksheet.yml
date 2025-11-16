@@ -1,4 +1,4 @@
-name: Issue Worksheet
+name: Test Issue Trigger
 
 on:
   issues:
@@ -8,101 +8,13 @@ on:
       - reopened
 
 permissions:
-  contents: write   # For committing worksheet files
-  issues: write     # For posting a comment
+  issues: write  # Needed to post comments on issues
 
 jobs:
-  process-issue:
+  test-trigger:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.repository.default_branch }}
-
-      - name: Extract issue details
-        id: gather
-        run: |
-          echo "Extracting issue details from GitHub event payload..."
-          ISSUE_NUMBER="$(jq -r '.issue.number' "$GITHUB_EVENT_PATH")"
-          ISSUE_TITLE="$(jq -r '.issue.title' "$GITHUB_EVENT_PATH")"
-          ISSUE_URL="$(jq -r '.issue.html_url' "$GITHUB_EVENT_PATH")"
-          ISSUE_BODY_RAW="$(jq -r '.issue.body' "$GITHUB_EVENT_PATH")"
-          DEFAULT_BRANCH="$(jq -r '.repository.default_branch' "$GITHUB_EVENT_PATH")"
-
-          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
-          echo "ISSUE_TITLE=$ISSUE_TITLE" >> $GITHUB_ENV
-          echo "ISSUE_URL=$ISSUE_URL" >> $GITHUB_ENV
-          echo "ISSUE_BODY<<EOF" >> $GITHUB_ENV
-          echo "$ISSUE_BODY_RAW" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-          echo "DEFAULT_BRANCH=$DEFAULT_BRANCH" >> $GITHUB_ENV
-
-      - name: Create Markdown file
-        env:
-          ISSUE_NUMBER: ${{ env.ISSUE_NUMBER }}
-          ISSUE_TITLE: ${{ env.ISSUE_TITLE }}
-          ISSUE_BODY: ${{ env.ISSUE_BODY }}
-          ISSUE_URL: ${{ env.ISSUE_URL }}
-        run: |
-          set -e
-          FILE="worksheets/issue-${ISSUE_NUMBER}.md"
-          echo "Creating file: $FILE"
-          mkdir -p worksheets
-          {
-            echo "# Issue $ISSUE_NUMBER: $ISSUE_TITLE"
-            echo ""
-            echo "**Issue URL:** [$ISSUE_URL]($ISSUE_URL)"
-            echo ""
-            echo "**Issue Title:** $ISSUE_TITLE  "
-            echo "**Issue Number:** $ISSUE_NUMBER"
-            echo ""
-            echo "## Issue Body"
-            echo ""
-            echo "$ISSUE_BODY"
-          } > "$FILE"
-          echo "Created worksheet file:"
-          cat "$FILE"
-
-      - name: Git status before commit
-        run: git status
-
-      - name: Configure Git user
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Commit changes
-        id: commit
-        run: |
-          set -e
-          FILE="worksheets/issue-${ISSUE_NUMBER}.md"
-          git add "$FILE"
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-            echo "CHANGES_MADE=false" >> $GITHUB_ENV
-            exit 0
-          fi
-          git commit -m "Add worksheet for issue #$ISSUE_NUMBER"
-          echo "CHANGES_MADE=true" >> $GITHUB_ENV
-
-      - name: Push changes
-        run: |
-          set +e
-          echo "Pushing to ${DEFAULT_BRANCH}..."
-          git push origin "HEAD:${DEFAULT_BRANCH}" 2>&1 | tee push.log
-          PUSH_EXIT=${PIPESTATUS[0]}
-          set -e
-          if [ $PUSH_EXIT -ne 0 ]; then
-            echo "❌ Push failed. Possibly due to protected branch."
-            cat push.log
-            exit 1
-          fi
-          echo "✅ Push succeeded."
-
-      - name: Comment on the issue with link to worksheet
-        if: ${{ env.CHANGES_MADE == 'true' && success() }}
+      - name: Comment on issue
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -110,13 +22,10 @@ jobs:
             const issueNumber = context.issue.number;
             const repoOwner = context.repo.owner;
             const repoName = context.repo.repo;
-            const branch = process.env.DEFAULT_BRANCH;
-
-            const commentBody = `📝 Worksheet for this issue: [issue-${issueNumber}.md](https://github.com/${repoOwner}/${repoName}/blob/${branch}/worksheets/issue-${issueNumber}.md)`;
 
             await github.rest.issues.createComment({
               owner: repoOwner,
               repo: repoName,
               issue_number: issueNumber,
-              body: commentBody
+              body: "✅ Issue trigger test: workflow ran successfully!"
             });
