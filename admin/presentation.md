@@ -10,7 +10,7 @@
 
 **Transforming how NASA scientists, technical teams, and end users collaborate to build Earth observation solutions**
 
-[🎯 View Repository](https://github.com/CherrelleTucker/codesign-toolkit) • [📚 Documentation](#) • [🛠️ Find a Tool](#)
+[🎯 View Repository](https://github.com/CherrelleTucker/codesign-toolkit/issues) • [📚 Documentation](https://github.com/CherrelleTucker/codesign-toolkit/tree/main/admin) • [🛠️ Find a Tool](https://github.com/CherrelleTucker/codesign-toolkit/blob/main/%F0%9F%9B%A0%EF%B8%8F%20find-a-tool.md)
 
 ---
 
