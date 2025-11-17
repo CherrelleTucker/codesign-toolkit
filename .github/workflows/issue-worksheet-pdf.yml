@@ -159,13 +159,11 @@ jobs:
           md-to-pdf "issue-${{ steps.build_md.outputs.issue-number }}.md" \
             --launch-options '{"args": ["--no-sandbox", "--disable-setuid-sandbox"]}'
           
-          # md-to-pdf creates issue-N.md.pdf, rename to issue-N.pdf
-          if [ -f "issue-${{ steps.build_md.outputs.issue-number }}.md.pdf" ]; then
-            mv "issue-${{ steps.build_md.outputs.issue-number }}.md.pdf" \
-               "issue-${{ steps.build_md.outputs.issue-number }}.pdf"
-            echo "✅ PDF renamed successfully"
+          # Verify PDF was created
+          if [ -f "issue-${{ steps.build_md.outputs.issue-number }}.pdf" ]; then
+            echo "✅ PDF created successfully"
           else
-            echo "❌ PDF not found at expected location"
+            echo "❌ PDF not found"
             ls -la
             exit 1
           fi
