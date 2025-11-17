@@ -88,3 +88,7 @@
 - 25+ documented success stories
 - Tools used in 3+ NASA centers
 - Regular community contributions
+
+### Suggested Features for Development
+- GitHub Pages site for users who don't want to work inside Github
+- ~Ability to print Worksheets of Tools~ https://github.com/CherrelleTucker/codesign-toolkit/tree/main/worksheets
