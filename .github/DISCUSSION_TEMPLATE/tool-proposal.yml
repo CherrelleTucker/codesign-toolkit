@@ -1,0 +1,151 @@
+title: "[Tool Proposal] "
+labels: ["tool-proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Thank you for proposing a new tool!
+
+        This proposal will be reviewed by the community and project maintainers. Once it receives sufficient feedback and approval, it will be converted into a development issue.
+
+        **Please fill out the sections below to help us understand your proposal.**
+
+  - type: input
+    id: tool-name
+    attributes:
+      label: Tool Name
+      description: What should this tool be called?
+      placeholder: e.g., "Stakeholder Mapping Canvas"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: tool-category
+    attributes:
+      label: Tool Category
+      description: What type of co-design tool is this?
+      options:
+        - Research & Discovery
+        - Ideation & Brainstorming
+        - Prototyping & Design
+        - Evaluation & Feedback
+        - Planning & Strategy
+        - Collaboration & Communication
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem-statement
+    attributes:
+      label: Problem Statement
+      description: What problem does this tool solve? What need does it address in the co-design process?
+      placeholder: Describe the challenge or gap that this tool would help address...
+    validations:
+      required: true
+
+  - type: textarea
+    id: tool-description
+    attributes:
+      label: Tool Description
+      description: Describe how the tool works and what it includes
+      placeholder: |
+        Explain:
+        - What the tool is and how it works
+        - Key features or components
+        - How users would interact with it
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Use Cases
+      description: When and how would someone use this tool?
+      placeholder: |
+        Examples:
+        - During initial stakeholder engagement workshops...
+        - When teams need to align on...
+        - For evaluating design concepts with...
+    validations:
+      required: true
+
+  - type: textarea
+    id: target-audience
+    attributes:
+      label: Target Audience
+      description: Who would use this tool?
+      placeholder: e.g., "Designers, researchers, community organizers, product teams..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: format
+    attributes:
+      label: Proposed Format
+      description: How should this tool be delivered?
+      placeholder: |
+        e.g.,
+        - Interactive web tool
+        - Downloadable template (PDF, Figma, Miro, etc.)
+        - Physical worksheet
+        - Digital worksheet
+        - Video guide
+    validations:
+      required: true
+
+  - type: textarea
+    id: similar-tools
+    attributes:
+      label: Similar Tools or Inspiration
+      description: Are there existing tools that inspired this or work similarly?
+      placeholder: Include links or names of tools that are similar or that this builds upon...
+    validations:
+      required: false
+
+  - type: textarea
+    id: implementation-ideas
+    attributes:
+      label: Implementation Ideas
+      description: Do you have ideas about how to build or create this tool?
+      placeholder: |
+        Optional - Share any thoughts on:
+        - Technologies or platforms to use
+        - Design approach
+        - Resources needed
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Would you like to be involved in developing this tool?
+      options:
+        - label: I'd like to help develop this tool
+        - label: I can provide subject matter expertise
+        - label: I can help with testing/feedback
+        - label: I'm just suggesting the idea
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Anything else you'd like to share about this proposal?
+      placeholder: Add any additional information, mockups, sketches, or context...
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+
+        ### What happens next?
+
+        1. **Community Discussion** - The community can discuss, ask questions, and provide feedback on your proposal
+        2. **Refinement** - You may be asked to clarify or expand on certain aspects
+        3. **Review** - Project maintainers will review the proposal and community feedback
+        4. **Decision** - If approved, this will be converted into a development issue and added to the roadmap
+
+        Thank you for contributing to the co-design toolkit!
