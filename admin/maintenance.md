@@ -5,7 +5,7 @@
 
 **Audience**: Toolkit administrators, maintainers, and core contributors
 
-**Last Updated**: [Current Date] | **Version**: 1.0
+**Last Updated**: [Current Date] | **Version**: 1.1
 
 ---
 
@@ -48,10 +48,12 @@
 │   ├── Category: users-stakeholders, technical-codev, etc.
 │   ├── Difficulty: difficulty-beginner, etc.
 │   └── Phase: phase-discovery, etc.
-└── 📊 Community Features/
-    ├── Discussions (community Q&A)
-    ├── Issues (bug reports, suggestions)
-    └── Pull requests (community contributions)
+├── 📊 Community Features/
+│   ├── Discussions (community Q&A)
+│   ├── Issues (bug reports, suggestions)
+│   └── Pull requests (community contributions)
+└── 📁 worksheets/                  → Auto-generated PDFs
+    └── issue-<number>.pdf
 ```
 
 ### **Current Toolkit Statistics** (Update regularly)
@@ -89,6 +91,7 @@
 - [ ] **Issue engagement metrics** - Which tools generate most discussion
 - [ ] **User feedback themes** - Common suggestions or problems
 - [ ] **Community growth tracking** - New contributors and users
+- [ ] **PDF system health check** - Verify recent issues have PDF comments
 
 #### Content Updates
 - [ ] **Source material review** - Check for updates to NASA/SERVIR docs
@@ -103,12 +106,14 @@
 - [ ] **Usage pattern analysis** - Most/least popular tools and why
 - [ ] **Community feedback synthesis** - Quarterly themes and recommendations
 - [ ] **Roadmap planning** - Next quarter priorities
+- [ ] **README link validation** - Verify all label filters and queries work
 
 #### Quality Assurance
 - [ ] **Comprehensive link check** - All external and internal links
 - [ ] **Cross-reference validation** - Issue numbers, categories, phases
 - [ ] **Style guide compliance** - Formatting, tone, structure
 - [ ] **Accessibility review** - Screen reader compatibility, alt text
+- [ ] **PDF worksheet spot-check** - Review 2-3 PDFs for quality
 
 ---
 
@@ -198,6 +203,7 @@
    - Collect user feedback
    - Address any issues or confusions
    - Make refinements as needed
+   - Verify PDF worksheet generated correctly
 
 ### **Tool Addition Checklist**
 
@@ -212,12 +218,15 @@
 - [ ] Content reviewed by subject matter expert
 - [ ] Links and references verified
 - [ ] Integration sections completed
+- [ ] Appropriate labels applied (category, phase, difficulty, tool)
 
 **After Development:**
 - [ ] All documentation files updated
 - [ ] Cross-references added to related tools
 - [ ] Community announcement prepared
 - [ ] Monitoring plan established
+- [ ] PDF worksheet auto-generated and verified
+- [ ] Tool appears in appropriate label-filtered views
 
 ---
 
@@ -448,6 +457,171 @@
 - question (purple #9c27b0)
 - community (green #4caf50)
 ```
+
+---
+
+### **Automated Worksheet PDF System**
+
+#### Overview
+The toolkit includes an automated GitHub Actions workflow that generates printable PDF worksheets for every tool issue. This feature requires no manual maintenance under normal operation.
+
+#### How It Works
+**Trigger Events:**
+- Issue opened (automatically generates PDF)
+- Issue edited (updates PDF with latest content)
+- Issue reopened (regenerates PDF)
+- Manual workflow dispatch (maintainers can force regeneration)
+
+**Automated Process:**
+1. Workflow extracts issue content and metadata
+2. Expands all collapsible `<details>` sections for printing
+3. Converts markdown to PDF using `md-to-pdf`
+4. Commits PDF to `worksheets/issue-<number>.pdf`
+5. Posts download link as issue comment
+
+#### Maintainer Responsibilities
+
+**Normal Operation - No Action Needed:**
+- System runs automatically on issue events
+- PDFs update whenever issue content changes
+- No manual intervention required
+
+**Monitoring (Monthly Check):**
+- [ ] Verify recent issues have PDF comments
+- [ ] Spot-check 2-3 PDFs for formatting quality
+- [ ] Check `worksheets/` directory isn't growing excessively large
+
+**Troubleshooting:**
+
+| **Issue** | **Diagnosis** | **Solution** |
+|-----------|---------------|--------------|
+| No PDF comment appears | Check Actions tab for workflow failures | Review error logs, may need to manually dispatch workflow |
+| PDF has collapsed sections | `<details>` expansion failed | Check workflow's `expandDetails()` function |
+| PDF formatting issues | `md-to-pdf` rendering problem | Test locally, may need CSS adjustments |
+| Workflow fails with sandbox error | Chrome/Puppeteer can't run | Verify `--no-sandbox` flag is present |
+
+**Manual Regeneration:**
+1. Go to **Actions** tab → **Issue Worksheet PDF**
+2. Click **Run workflow**
+3. Enter issue number
+4. Click **Run workflow** button
+5. Wait for completion, verify PDF in comments
+
+#### Workflow File Location
+`.github/workflows/issue-worksheet-pdf.yml`
+
+**Important Notes:**
+- Workflow uses `tmp_worksheets/` for temporary files (auto-deleted)
+- Only PDFs are committed to `worksheets/`, not markdown files
+- PDFs are never deleted automatically (manual cleanup if needed)
+- Each PDF averages 50-200KB depending on tool complexity
+
+#### User Documentation
+PDF system is documented in README.md under "📄 Printable Worksheets" section. Users are informed that:
+- PDFs auto-generate for all issues
+- Download links appear in issue comments
+- PDFs auto-update when issues are edited
+- Suitable for offline use in workshops/meetings
+
+---
+
+### **Dynamic Content Linking (README Maintenance)**
+
+#### No README Updates Needed for New Tools
+
+**Important**: The README uses GitHub's native label and issue filtering, which means **most links update automatically** when you add new tools.
+
+**What Auto-Updates (No Action Required):**
+
+| **Link Type** | **Example** | **Behavior** |
+|---------------|-------------|--------------|
+| Label filters | `[🔍 discovery-tools](../../labels/phase-discovery)` | Shows ALL issues with that label |
+| Issue queries | `issues?q=is:issue+label:tool` | Dynamically filters by label |
+| Issue references | Direct links like `../../issues/2` | Point to specific issues |
+
+**Adding a New Tool - Standard Process:**
+1. ✅ Create new GitHub issue with tool content
+2. ✅ Add appropriate labels (category, phase, difficulty)
+3. ✅ Done! Tool automatically appears in filtered views
+
+**When You DO Need to Update README:**
+
+| **Scenario** | **Action Required** |
+|--------------|---------------------|
+| **New tool category created** | Add new category section with description and links |
+| **New label system added** | Add to Quick Tool Finder or browsing options |
+| **Reorganizing structure** | Update category overview and navigation |
+| **Featuring specific tool** | Add to Quick Start or Success Stories (optional) |
+| **Updating statistics** | Update tool counts in categories table |
+
+#### Best Practices for Maintainers
+
+**Do This:**
+- ✅ Use consistent labeling for all new tools
+- ✅ Link to label filters (auto-updating)
+- ✅ Link to issue queries (auto-updating)
+- ✅ Update README only when structure changes
+
+**Don't Do This:**
+- ❌ Create manual lists of tool links in README
+- ❌ Hardcode tool counts that go stale
+- ❌ List individual tools by name in main README
+- ❌ Update README for routine tool additions
+
+#### Label Consistency Is Critical
+
+Since README relies on labels for auto-updating, **consistent labeling is essential**:
+
+**Required Labels for Every Tool:**
+```markdown
+Category (choose one):
+- users-stakeholders
+- technical-codev
+- organizational-process
+- impact-monitor
+
+Phase (choose one or more):
+- phase-discovery
+- phase-co-creation
+- phase-development
+- phase-deployment
+- phase-cross-cutting
+
+Difficulty (choose one):
+- difficulty-beginner
+- difficulty-intermediate
+- difficulty-advanced
+
+Type:
+- tool (required for all toolkit tools)
+```
+
+**Verification Checklist for New Tools:**
+- [ ] Has at least one category label
+- [ ] Has at least one phase label
+- [ ] Has exactly one difficulty label
+- [ ] Has the "tool" label
+- [ ] Appears in appropriate filtered views
+
+#### Quarterly README Review
+
+While individual tools don't require README updates, perform these quarterly checks:
+
+**Q1, Q2, Q3, Q4 (15 minutes):**
+- [ ] Verify all label filter links still work
+- [ ] Check tool count statistics for accuracy
+- [ ] Test Quick Start Navigator links
+- [ ] Ensure category overview links point to correct issues
+- [ ] Validate that "Browse All Tools" query functions properly
+
+#### Future Enhancements to Consider
+- [ ] Batch regeneration script for all issues
+- [ ] PDF version history tracking
+- [ ] Custom branding/styling for PDFs
+- [ ] Optional PDF pagination for very long tools
+- [ ] Analytics on PDF download/usage patterns
+
+---
 
 ### **Access Management**
 
@@ -722,6 +896,7 @@ This maintenance guide provides the foundation for sustainable toolkit growth an
 - **Community Focus**: Prioritize user needs and feedback
 - **Evidence-Based Approach**: Ground all tools in proven methodologies  
 - **Collaborative Spirit**: Foster inclusive, supportive community environment
+- **Smart Automation**: Leverage automated systems (PDFs, label filtering) to reduce manual work
 
 **Remember**: The toolkit's value comes from its practical utility to real users solving real problems. All maintenance activities should serve this fundamental purpose.
 
