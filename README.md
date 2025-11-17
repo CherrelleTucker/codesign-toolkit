@@ -126,9 +126,37 @@ graph LR
 
 ---
 
-## 🎯 Success Stories
+## 📄 Printable Worksheets
 
-> I'm worried for your mental health. Please take a day off and away from all work things.
+**Every tool in this toolkit automatically generates a printable PDF worksheet!**
+
+When you open any tool issue, a bot will automatically create a downloadable PDF that includes:
+- ✅ All tool content with expanded sections (no collapsed details)
+- ✅ Tool metadata (labels, assignees, status)
+- ✅ Direct link to the GitHub issue
+- ✅ Timestamp showing when the worksheet was generated
+
+### 🖨️ How to Get Your Worksheet
+
+1. **Open any tool issue** in this repository
+2. **Look for the automated comment** with a download link
+3. **Click "Click here to download the PDF"** 
+4. **Print or save** for offline use
+
+### ✨ Auto-Updates
+
+Worksheets automatically regenerate whenever:
+- A tool issue is created
+- A tool issue is edited
+- A tool issue is reopened
+
+This ensures you always have the most current version of each tool ready for workshops, meetings, or offline reference!
+
+**💡 Pro Tip:** Download worksheets before heading into meetings or fieldwork where you might not have internet access.
+
+---
+
+## 🎯 Success Stories
 
 > *"The stakeholder mapping tool completely changed how we approached our wildfire monitoring solution. Instead of building what we thought users needed, we discovered what they actually needed."*
 > 
